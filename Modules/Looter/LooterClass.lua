@@ -44,7 +44,7 @@ Looter.Run = function(options)
                 corps.Use()
 
             	if(options.looter_useSkinning)then
-            		form:ShowMessage("Running skinner")
+            		Form:ShowMessage("Running skinner")
             		UOExt.Managers.SkinningManager.CutAndLoot(corps)
             	end
 
@@ -58,11 +58,11 @@ Looter.Run = function(options)
         			items = World().WithType(options.looter_lootItems).InContainer(corps.ID).Items
             	end
 
-        		form:ShowMessage("Found items to loot: " .. #items)
+        		Form:ShowMessage("Found items to loot: " .. #items)
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
-			            form:ShowMessage("Moving " .. item.Name)
+			            Form:ShowMessage("Moving " .. item.Name)
 			            UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
 			        end
         		end

@@ -15,6 +15,23 @@ Form.runtime["Looter"] =
 		end
 		controls.TLootEnabled.Checked = Form.Config["looter_IsEnabled"]
 
+		local updateLootBagButton = function()
+			if(tonumber(UO.BackpackID) == tonumber(Form.Config["looter_containerID"])) then
+				controls.TSetLootBag.Caption = "Cont: Backpack"
+			else
+				controls.TSetLootBag.Caption = "Cont: " .. Form.Config["looter_containerID"]
+			end
+		end
+		controls.TSetLootBag = Form:AddControl(Obj.Create("TButton"), panel.Width - (buttonSize * 2) - (margin * 6), margin, panel)
+		updateLootBagButton()
+		controls.TSetLootBag.Width = buttonSize
+		controls.TSetLootBag.Height = 20
+		controls.TSetLootBag.OnClick = function(sender)
+			Form:ShowMessage("Select new looting bag... or wait 6 seconds to set it to your backpack")
+			Form.Config["looter_containerID"] = UOExt.Managers.ItemManager.GetTargetID(UO.BackpackID)
+			updateLootBagButton()
+		end
+
 		controls.TLootSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, 25, panel)
 		controls.TLootSettingsPanel.Width = panel.Width - buttonSize - (margin) - 30
 		controls.TLootSettingsPanel.Height = panel.Height - 30
@@ -29,6 +46,8 @@ Form.runtime["Looter"] =
 		controls.TLootAllowCrimLooting.OnClick = function(sender)
 			Form.Config["looter_allowCrim"] = sender.Checked
 		end
+		-- TODO Crim looting needs to be implemented
+		controls.TLootAllowCrimLooting.Enabled = false
 		
 		controls.TLootAllowSkinning = Form:AddControl(Obj.Create("TCheckBox"), (margin * 2) + 150, margin, controls.TLootSettingsPanel)
 		controls.TLootAllowSkinning.Caption = "Skin corpses"
@@ -113,7 +132,7 @@ Form.runtime["Looter"] =
 		Form:CreateConfigVar("looter_containerID", UO.BackpackID)
 		Form:CreateConfigVar("looter_distance",2)
 		Form:CreateConfigVar("looter_useSkinning", true)
-		Form:CreateConfigVar("looter_allowCrim", false)
+		Form:CreateConfigVar("looter_allowCrim", true)
 		Form:CreateConfigVar("looter_lootAllFromOwn", true)
 	end,
 	["Run"] = function(config)

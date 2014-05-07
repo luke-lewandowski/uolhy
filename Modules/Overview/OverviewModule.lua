@@ -40,6 +40,7 @@ Form.runtime["Overview"] =
 			controls.TMessageBox.Items.Add(msg)
 			print(msg)
 
+			UO.SysMessage(message)
 			controls.TMessageBox.TopIndex = -1 + controls.TMessageBox.Items.Count
 		end
 
@@ -49,6 +50,6 @@ Form.runtime["Overview"] =
 		-- Not required here
 	end,
 	["Run"] = function(config)
-		Form:ShowMessage("We are running!")
+		Form:ShowMessage("...")
 	end
 }
