@@ -9,7 +9,7 @@ Looter.History = UOExt.Structs.LimitedStack:Create(20)
 -- 1. Find corpses around you
 -- 2. Loot & skin them (if selected)
 Looter.Run = function(options)
-	if(optiosn == nil) then
+	if(options == nil) then
 		options = {
 			-- Items to loot
 			-- Note: If its detected that corps belongs to you 
@@ -31,9 +31,17 @@ Looter.Run = function(options)
 		    ["looter_distance"] = 2,
 
 		    -- Use skinning looter for corpses around
-		    ["looter_useSkinning"] = true
+		    ["looter_useSkinning"] = true,
+
+		    -- Loot only specific types
+		    ["looter_ignoreTypes"] = false,
 		}
 	end
+
+	if(UO.Hits <= 0) then
+		return
+	end
+
 
 	local corpses = UOExt.Managers.ItemManager.GetCorpsesWithinRange(options.looter_distance)
 
@@ -50,8 +58,8 @@ Looter.Run = function(options)
 
             	local items = {}
 
-            	if(string.find(corps.Name, UO.CharName))then
-            		-- Its your own body! Loot all
+            	if(options.looter_ignoreTypes)then
+            		-- Loot all
             		items = World().InContainer(corps.ID).Items
             	else
             		-- Any other body. Use selected types.
@@ -62,9 +70,15 @@ Looter.Run = function(options)
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
-			            Form:ShowMessage("Moving " .. item.Name)
-			            UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
+    					if(string.len(item.Name) > 0) then
+							Form:ShowMessage("Moving " .. item.Name)
+			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
+    					else
+			            	Form:ShowMessage("Skipping item with no name.")
+			            end
 			        end
+
+			        Form:ShowMessage("Done looting.")
         		end
 
         		Looter.History:push(corps.ID)

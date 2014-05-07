@@ -57,12 +57,12 @@ Form.runtime["Looter"] =
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
 		
-		controls.TLootAllFromOwn = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TLootSettingsPanel)
-		controls.TLootAllFromOwn.Caption = "Enable looting all items from your corps"
-		controls.TLootAllFromOwn.Width = 250
-		controls.TLootAllFromOwn.Checked = Form.Config["looter_lootAllFromOwn"]
-		controls.TLootAllFromOwn.OnClick = function(sender)
-			Form.Config["looter_lootAllFromOwn"] = sender.Checked
+		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TLootSettingsPanel)
+		controls.TLootIgnoreTypes.Caption = "Ignore loot type list (loot all)"
+		controls.TLootIgnoreTypes.Width = 250
+		controls.TLootIgnoreTypes.Checked = Form.Config["looter_ignoreTypes"]
+		controls.TLootIgnoreTypes.OnClick = function(sender)
+			Form.Config["looter_ignoreTypes"] = sender.Checked
 		end
 		
 		controls.TLootTypes = Form:AddControl(Obj.Create("TListBox"), panel.Width - buttonSize - margin, margin, panel)
@@ -133,7 +133,7 @@ Form.runtime["Looter"] =
 		Form:CreateConfigVar("looter_distance",2)
 		Form:CreateConfigVar("looter_useSkinning", true)
 		Form:CreateConfigVar("looter_allowCrim", true)
-		Form:CreateConfigVar("looter_lootAllFromOwn", true)
+		Form:CreateConfigVar("looter_ignoreTypes", true)
 	end,
 	["Run"] = function(config)
 		Looter.Run(Form.Config)
