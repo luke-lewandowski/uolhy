@@ -15,20 +15,18 @@ Looter.Run = function(options)
 			-- Note: If its detected that corps belongs to you 
 			-- then it will loot all items
 			["looter_lootItems"] = {
-				3821, -- Gold
+				["3821"] = "gold", -- Gold
 
 				-- Rocks
-				3859, -- Ruby
-				3877, -- Amber
-				3862, -- Amethyst
-				3861 -- Citrine
+				["3859"] = "ruby", -- Ruby
+				["3877"] = "amber" -- Amber
 			},
 
 			-- Container of where to place all the loot
 		    ["looter_containerID"] = UO.BackpackID,
 
 		    -- Distance from your character to seek corpses
-		    ["looter_distance"] = 2,
+		    ["looter_distance"] = 5,
 
 		    -- Use skinning looter for corpses around
 		    ["looter_useSkinning"] = true,
@@ -42,7 +40,6 @@ Looter.Run = function(options)
 		return
 	end
 
-
 	local corpses = UOExt.Managers.ItemManager.GetCorpsesWithinRange(options.looter_distance)
 
 	if(#corpses > 0) then
@@ -50,6 +47,8 @@ Looter.Run = function(options)
             if(Looter.History:valueExists(corps.ID) ~= true) then
             	-- Open corps
                 corps.Use()
+
+                wait(2000)
 
             	if(options.looter_useSkinning)then
             		Form:ShowMessage("Running skinner")
@@ -63,7 +62,7 @@ Looter.Run = function(options)
             		items = World().InContainer(corps.ID).Items
             	else
             		-- Any other body. Use selected types.
-        			items = World().WithType(options.looter_lootItems).InContainer(corps.ID).Items
+        			items = World().WithType(UOExt.TableUtils.GetKeys(options.looter_lootItems)).InContainer(corps.ID).Items
             	end
 
         		Form:ShowMessage("Found items to loot: " .. #items)

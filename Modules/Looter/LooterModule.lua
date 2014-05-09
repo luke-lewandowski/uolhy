@@ -1,5 +1,55 @@
 dofile(".\\LooterClass.lua")
 
+local LootItems = function(config)
+	local arr = {}
+	local items = {}
+
+	arr = config.looter_lootItems
+
+	items.GetItemNumbers = function()
+		local numbers = {}
+
+		for k,v in pairs(arr) do
+			local name, key = items.GetItem(v)
+			table.insert(numbers, key)
+		end
+
+		return numbers
+	end
+
+	items.GetItem = function(itemString)
+		return itemString:match("([^,]+),([^,]+)")
+	end
+
+	items.GetItemNames = function()
+		local texts = {}
+
+		for k,v in pairs(arr) do
+			local name, key = items.GetItem(v)
+			table.insert(texts, name)
+		end
+
+		return texts
+	end
+
+	items.AddItem = function(id, name)
+		table(arr, tostring(id) .. "," .. name)
+	end
+
+	items.RemoveItem = function(id)
+		for k,v in pairs(arr) do
+			local name, key = items.GetItem(v)
+			if(tonumber(key) == tonumber(id)) then
+				table.remove(arr, k)
+			end
+		end
+	end
+
+	items.GetConfig = function()
+		return arr
+	end
+end
+
 Form.runtime["Looter"] = 
 {
 	["Index"] = 1,
@@ -68,7 +118,7 @@ Form.runtime["Looter"] =
 		controls.TLootTypes = Form:AddControl(Obj.Create("TListBox"), panel.Width - buttonSize - margin, margin, panel)
 		controls.TLootTypes.Height = panel.Height - (2 * margin)
 		controls.TLootTypes.Width = buttonSize
-		for k,v in pairs(Form.Config["looter_lootItems"]) do
+		for k,v in pairs(UOExt.TableUtils.CombineKeyWithValue(Form.Config["looter_lootItems"], ",")) do
 			controls.TLootTypes.Items.Add(tostring(v))
 		end
 
@@ -80,7 +130,37 @@ Form.runtime["Looter"] =
 		controls.TLooterAddType.OnClick = function(sender)
 			-- Get target cursor
 			-- Add it to the list if such items doesnt exist yet
-			--local index = controls.TLootTypes.Items.IndexOf()
+			Form:ShowMessage("Select new item to add to looting list... or wait 6 seconds to cancel")
+			local newItem = UOExt.Managers.ItemManager.GetTargetID()
+			if(newItem > 0) then
+				
+					local item = World().WithID(newItem).Items[1]
+					if(item ~= nil and item.Type ~= nil) then
+						local exists = Form.Config["looter_lootItems"][item.Type] ~= nil
+						if(Form.Config["looter_lootItems"][tostring(item.Type)] == nil) then
+							local nameArr = {}
+
+							-- Sometimes names contain other characters - filter it
+							local names = {}
+
+							string.gsub(item.Name, "(%w+)", function(s)
+									if(string.match(s, "%d") == nil) then
+										table.insert(names, s) 
+									end
+								end
+							)
+
+							local name = table.concat(names, " ")
+
+							Form:ShowMessage(tostring(name) .. " added to loot list")
+							Form.Config["looter_lootItems"][item.Type] = name
+							controls.TLootTypes.Items.Add(tostring(item.Type) .. "," .. tostring(name))
+						else
+							Form:ShowMessage("Item already on the list!")
+						end
+					end
+				
+			end
 		end
 
 		-- Remove Type from list
@@ -92,22 +172,12 @@ Form.runtime["Looter"] =
 			local index = controls.TLootTypes.ItemIndex
 			if(index > -1) then
 				local toRemove = controls.TLootTypes.Items.GetString(index)
+				local id, name = toRemove:match("([^,]+),([^,]+)")
+
 				controls.TLootTypes.Items.Delete(tonumber(index))
-				Form:ShowMessage("Removed " .. toRemove .. " from loot list")
+				Form:ShowMessage("Removed " .. name .. " from loot list")
 
-				-- Rebuild list for config
-				for k,v in pairs(Form.Config["looter_lootItems"]) do
-					print(v .. toRemove)
-					if(tonumber(v) == tonumber(toRemove)) then
-						print("Remove ".. v)
-						table.remove(Form.Config["looter_lootItems"], k)
-					end
-				end
-
-				print("items after deletion")
-				for k,v in pairs(Form.Config["looter_lootItems"]) do
-					print(v)
-				end
+				Form.Config["looter_lootItems"][id] = nil
 			end
 		end
 
@@ -120,13 +190,13 @@ Form.runtime["Looter"] =
 			-- Note: If its detected that corps belongs to you 
 			-- then it will loot all items
 			{
-				3821, -- Gold
+				["3821"] = "gold", -- Gold
 
 				-- Rocks
-				3859, -- Ruby
-				3877, -- Amber
-				3862, -- Amethyst
-				3861 -- Citrine
+				["3859"] = "ruby", -- Ruby
+				["3877"] = "amber" -- Amber
+				--3862, -- Amethyst
+				--3861 -- Citrine
 			}
 		)
 		Form:CreateConfigVar("looter_containerID", UO.BackpackID)
