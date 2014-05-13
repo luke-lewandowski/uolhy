@@ -85,6 +85,11 @@ function LHYMain:Create()
 		setatom(LHYVars.Shared.Config, json.encode(f.Config))
 	end
 
+	-- Use this public method to make sure that time enabled/disabeld as per atom variable
+	function f:UpdateTimerStatus()
+		ems.Timer.Enabled = getatom(LHYVars.Shared.IsRunning)
+	end
+
 	function f:Run()
 		f.Config = f:LoadConfiguration()
 

@@ -34,7 +34,8 @@ local overviewDefinition =
 			else
 				sender.Caption = "Run"
 			end
-			controls.Timer.Enabled = currentVar
+
+			Form:UpdateTimerStatus()
 		end
 
 		-- Message history
@@ -42,11 +43,10 @@ local overviewDefinition =
 		controls.TMessageBox.Width = panel.Width - buttonSize - (margin * 3)
 		controls.TMessageBox.Height = panel.Height - (margin * 2)
 
-		-- Timer for message boxes
+		-- Timer for capturing all messages send from LHYConnect
 		controls.MsgTimer = Obj.Create("TTimer")
 		controls.MsgTimer.Interval = 1000
 		controls.MsgTimer.OnTimer = function(sender)
-			print("Timer...")
 			if(LHYConnect.GetMessage() ~= nil) then
 				local msg = LHYConnect.GetMessage()
 				Form:ShowMessage(msg)
