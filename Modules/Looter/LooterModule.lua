@@ -1,5 +1,9 @@
 dofile(".\\LooterClass.lua")
 
+-- ########################################
+-- PRIVATE METHODS / PARAMETERS
+-- ########################################
+
 local LootItems = function(config)
 	local arr = {}
 	local items = {}
@@ -50,9 +54,13 @@ local LootItems = function(config)
 	end
 end
 
-Form.runtime["Looter"] = 
+-- ########################################
+-- MODULE DEFINITION
+-- ########################################
+
+local looterDefinition = 
 {
-	["Index"] = 1,
+	["TabName"] = "Looter",
 	["Creator"] = function(controls, panel)
 		local buttonSize = 100
 		local rowHeight = 30
@@ -187,8 +195,6 @@ Form.runtime["Looter"] =
 		Form:CreateConfigVar("looter_IsEnabled", false)
 		Form:CreateConfigVar("looter_lootItems",
 			-- Items to loot
-			-- Note: If its detected that corps belongs to you 
-			-- then it will loot all items
 			{
 				["3821"] = "gold", -- Gold
 
@@ -216,3 +222,5 @@ Form.runtime["Looter"] =
 		end
 	end
 }
+-- Add to ModulesDefinition to make it run
+table.insert(Form.ModulesDefinitions, looterDefinition)

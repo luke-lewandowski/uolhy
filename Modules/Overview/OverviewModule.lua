@@ -1,6 +1,6 @@
-Form.runtime["Overview"] = 
+local overviewDefinition = 
 {
-	["Index"] = 0,
+	["TabName"] = "Overview",
 	["Creator"] = function(controls, panel)
 		local buttonSize = 100
 		local rowHeight = 30
@@ -77,3 +77,4 @@ Form.runtime["Overview"] =
 		-- Not required here
 	end
 }
+table.insert(Form.ModulesDefinitions, overviewDefinition)

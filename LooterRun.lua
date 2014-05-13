@@ -16,9 +16,11 @@ while true do
 	local lhyrunning = getatom(LHYVars.Shared.IsRunning)
 
 	if(lhyrunning ~= nil and lhyrunning == true) then
+		-- Mark Looter as "running"
 		setatom(Looter.Shared.IsRunning, true)
-		local config = json.decode(getatom(LHYVars.Shared.Config))
 		
+		-- Get config from LHY
+		local config = json.decode(getatom(LHYVars.Shared.Config))
 		if(config ~= nil) then
 			print("...")
 			Looter.Run(config)
@@ -33,5 +35,3 @@ while true do
 
 	wait(1000)
 end
-
-setatom(Looter.Shared.IsLoaded, false)

@@ -70,6 +70,11 @@ Looter.Run = function(options)
             		items = World().InContainer(corps.ID).Items
             	else
             		-- Any other body. Use selected types.
+            		print("Looking for following types")
+            		for k,v in pairs(UOExt.TableUtils.GetKeys(options.looter_lootItems)) do
+            			print(k,v)
+            		end
+
         			items = World().WithType(UOExt.TableUtils.GetKeys(options.looter_lootItems)).InContainer(corps.ID).Items
             	end
 
