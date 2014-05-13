@@ -20,13 +20,21 @@ Form.runtime["Overview"] =
 		controls.TRunButton.Caption = "Run"
 		controls.TRunButton.Width = buttonSize
 		controls.TRunButton.OnClick = function(sender)
-			Form.IsRunning = not Form.IsRunning
-			if(Form.IsRunning) then
+			local currentVar = getatom(LHYVars.Shared.IsRunning)
+
+			if(currentVar == nil) then
+				currentVar = false
+			end
+
+			currentVar = not currentVar
+
+			setatom(LHYVars.Shared.IsRunning, currentVar)
+			if(currentVar) then
 				sender.Caption = "Stop"
 			else
 				sender.Caption = "Run"
 			end
-			controls.Timer.Enabled = Form.IsRunning
+			controls.Timer.Enabled = currentVar
 		end
 
 		-- Message history
@@ -34,14 +42,30 @@ Form.runtime["Overview"] =
 		controls.TMessageBox.Width = panel.Width - buttonSize - (margin * 3)
 		controls.TMessageBox.Height = panel.Height - (margin * 2)
 
-		function Form:ShowMessage(message)
-			local nHour, nMinute = gettime ()
-			local msg = string.format("%.2d:%.2d: %s", nHour, nMinute, message)
-			controls.TMessageBox.Items.Add(msg)
-			print(msg)
+		-- Timer for message boxes
+		controls.MsgTimer = Obj.Create("TTimer")
+		controls.MsgTimer.Interval = 1000
+		controls.MsgTimer.OnTimer = function(sender)
+			print("Timer...")
+			if(LHYConnect.GetMessage() ~= nil) then
+				local msg = LHYConnect.GetMessage()
+				Form:ShowMessage(msg)
+				LHYConnect.ClearMessage()
+			end
+		end
+		controls.MsgTimer.Enabled = true
 
-			UO.SysMessage(message)
-			controls.TMessageBox.TopIndex = -1 + controls.TMessageBox.Items.Count
+		-- Override default messaging system
+		function Form:ShowMessage(message)
+			if(message ~= nil) then
+				local nHour, nMinute = gettime ()
+				local msg = string.format("%.2d:%.2d: %s", nHour, nMinute, message)
+				controls.TMessageBox.Items.Add(msg)
+				print(msg)
+
+				UO.SysMessage(message)
+				controls.TMessageBox.TopIndex = -1 + controls.TMessageBox.Items.Count
+			end
 		end
 
 		Form:ShowMessage("LHY Loaded. Press Run to execute.")

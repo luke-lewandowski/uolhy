@@ -26,9 +26,16 @@ function LHYMain:Create()
 
 	local ems = {}
 
+	-- Destroys all local components
 	local destroy = function()
-		for i,v in pairs(ems) do
-			Obj.Free(v)
+		for k,v in pairs(ems) do
+			if(type(v) == "table")then
+				for subk,subv in pairs(v) do
+					Obj.Free(v)
+				end
+			else
+				Obj.Free(v)
+			end
 		end
 	end
 
@@ -59,14 +66,19 @@ function LHYMain:Create()
 
 		if(settings == nil) then
 			UOExt.Config.SaveConfig(LHYMain.Settings.configFile, configStructure)
-			return configStructure
-		else
-			return settings
+			settings = configStructure
 		end
+
+		-- Saving to atom variable as string to be decoded elsehwere
+		setatom(LHYVars.Shared.Config, json.encode(settings))
+		return settings
 	end
 
 	function f:SaveConfiguration()
 		UOExt.Config.SaveConfig(LHYMain.Settings.configFile, f.Config)
+
+		-- Saving to atom variable as string to be doecoded elsewhere
+		setatom(LHYVars.Shared.Config, json.encode(f.Config))
 
 		ems.TMsg = Obj.Create("TMessageBox")
 		ems.TMsg.Button = 0
@@ -98,7 +110,7 @@ function LHYMain:Create()
 				end
 			end
 		end
-		
+
 		ems.TTab = f:AddControl(Obj.Create("TTabControl"), 5, 5)
 		ems.TTab.Width = ems.Main.Width - 20
 		ems.TTab.Height = ems.Main.Height - 40
@@ -163,6 +175,11 @@ function LHYMain:Create()
 		control.Parent = parent
 
 		return control
+	end
+
+	function f:ShowMessage(message)
+			print(msg)
+			UO.SysMessage(message)
 	end
 
 	return f

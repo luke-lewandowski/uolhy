@@ -206,6 +206,13 @@ Form.runtime["Looter"] =
 		Form:CreateConfigVar("looter_ignoreTypes", true)
 	end,
 	["Run"] = function(config)
-		Looter.Run(Form.Config)
+		-- Check here if status of looter is running
+		if(config.looter_IsEnabled) then
+			local loaded = getatom(Looter.Shared.IsLoaded)
+
+			if(loaded == nil) then
+				Form:ShowMessage("Open LooterRun.lua and press Start to run Looter.")
+			end
+		end
 	end
 }

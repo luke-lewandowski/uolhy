@@ -1,9 +1,16 @@
+dofile("..\\LHYVars.lua")
+dofile("..\\LHYConnect.lua")
+
 Looter = Looter or {}
 
 -- Amount of bodies to rememebr
 Looter.History = UOExt.Structs.LimitedStack:Create(20)
 
--- #### Nothing past this line needs changing #### --
+-- Looter settings for use with atoms
+Looter.Shared = {
+	["IsRunning"] = "looter_isrunning",
+	["IsLoaded"] = "looter_isloaded"
+}
 
 -- Main method that needs to be run in order to 
 -- 1. Find corpses around you
@@ -36,6 +43,7 @@ Looter.Run = function(options)
 		}
 	end
 
+	-- Do not run when dead
 	if(UO.Hits <= 0) then
 		return
 	end
@@ -51,7 +59,7 @@ Looter.Run = function(options)
                 wait(2000)
 
             	if(options.looter_useSkinning)then
-            		Form:ShowMessage("Running skinner")
+        			LHYConnect.PostMessage("Running skinner")
             		UOExt.Managers.SkinningManager.CutAndLoot(corps)
             	end
 
@@ -65,19 +73,18 @@ Looter.Run = function(options)
         			items = World().WithType(UOExt.TableUtils.GetKeys(options.looter_lootItems)).InContainer(corps.ID).Items
             	end
 
-        		Form:ShowMessage("Found items to loot: " .. #items)
+            	LHYConnect.PostMessage(("Found items to loot: " .. #items))
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
     					if(string.len(item.Name) > 0) then
-							Form:ShowMessage("Moving " .. item.Name)
+    						LHYConnect.PostMessage(("Moving " .. item.Name))
 			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
     					else
-			            	Form:ShowMessage("Skipping item with no name.")
+    						LHYConnect.PostMessage("Skipping item with no name.")
 			            end
 			        end
-
-			        Form:ShowMessage("Done looting.")
+			        LHYConnect.PostMessage("Done looting.")
         		end
 
         		Looter.History:push(corps.ID)
