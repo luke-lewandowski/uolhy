@@ -56,12 +56,14 @@ Looter.Run = function(options)
             	-- Open corps
                 corps.Use()
 
-                wait(2000)
+                wait(600)
 
             	if(options.looter_useSkinning)then
         			LHYConnect.PostMessage("Running skinner")
             		UOExt.Managers.SkinningManager.CutAndLoot(corps)
             	end
+
+            	wait(2000)
 
             	local items = {}
 

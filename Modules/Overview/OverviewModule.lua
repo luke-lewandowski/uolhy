@@ -63,7 +63,7 @@ local overviewDefinition =
 				controls.TMessageBox.Items.Add(msg)
 				print(msg)
 
-				UO.SysMessage(message)
+				UO.SysMessage(message, 100)
 				controls.TMessageBox.TopIndex = -1 + controls.TMessageBox.Items.Count
 			end
 		end
