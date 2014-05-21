@@ -63,22 +63,24 @@ Looter.Run = function(options)
             		UOExt.Managers.SkinningManager.CutAndLoot(corps)
             	end
 
-            	wait(2000)
+            	wait(600)
 
             	local items = {}
 
-            	if(options.looter_ignoreTypes)then
-            		-- Loot all
-            		items = World().InContainer(corps.ID).Items
-            	else
-            		-- Any other body. Use selected types.
-            		print("Looking for following types")
-            		for k,v in pairs(UOExt.TableUtils.GetKeys(options.looter_lootItems)) do
-            			print(k,v)
-            		end
+                allItems = World().InContainer(corps.ID).Items
 
-        			items = World().WithType(UOExt.TableUtils.GetKeys(options.looter_lootItems)).InContainer(corps.ID).Items
-            	end
+                if(#allItems > 0 and options.looter_ignoreTypes == false) then
+                    for ak,av in pairs(allItems) do
+                        print(av.Type)
+                        for k,v in pairs(UOExt.TableUtils.GetKeys(options.looter_lootItems)) do
+                            if((av.Type ~= nil and v ~= nil) and tonumber(av.Type) == tonumber(v)) then
+                                table.insert(items, av)
+                            end
+                        end
+                    end
+                else
+                    items = allItems
+                end
 
             	LHYConnect.PostMessage(("Found items to loot: " .. #items))
 
