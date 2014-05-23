@@ -100,8 +100,9 @@ function LHYMain:Create()
 		end
 		ems.Main.Width = 500
 		ems.Main.Height = 150
-		ems.Main.FormStyle = 3 -- Always on top
-		ems.Main.BorderStyle = 3 -- Do not allow resize
+		-- TODO Allow user to tick whether they want it to be always on top.
+		--ems.Main.FormStyle = 1 --3 -- Always on top
+		ems.Main.BorderStyle = 3 --3 -- Do not allow resize
 
 		-- Application is driven by a timer
 		ems.Timer = Obj.Create("TTimer")
@@ -187,6 +188,10 @@ function LHYMain:Create()
 		return control
 	end
 
+	--- ---------------------------------------
+	-- @name ShowMessage
+	-- @param message - message to be shown 
+	-- Note: This gets overriden in Overview module that will use UI to also show the message
 	function f:ShowMessage(message)
 			print(msg)
 			UO.SysMessage(message)
