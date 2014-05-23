@@ -14,6 +14,5 @@ Form = LHYMain:Create()
 -- Modules
 dofile(".\\Modules\\Overview\\OverviewModule.lua")
 dofile(".\\Modules\\Looter\\LooterModule.lua")
-dofile(".\\Modules\\Pets\\PetsModule.lua")
 
 Form:Run()
