@@ -7,7 +7,7 @@ LHYMain.Settings = {
 	-- Each character will create its own config
 	["configFile"] = BaseDir .. "\\Configs\\config_" .. string.gsub(UO.CharName, " ", "_") .. "-" .. string.gsub(UO.Shard, " ", "_") .. ".json",
 	["timeInterval"] = 2000,
-	["version"] = "0.2"
+	["version"] = "0.9"
 }
 
 -- JSON config file should mimic following structure
