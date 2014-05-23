@@ -1,3 +1,4 @@
 [submodule "Lib/uoext"]
 	path = Lib/uoext
 	url = https://github.com/lemining/uoext.git
+	branch = master
