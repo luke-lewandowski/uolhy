@@ -1,14 +1,20 @@
--- Shared Variables used for broadcasting changes and messages across threads
+--- Definition of LHY variables to be used across.
+-- @module LHYVars
+
+
+--- Container for all variables that are going to be shared globaly
+-- @table LHYVars
+-- @field Shared Shared Variables used for broadcasting changes and messages across threads
 LHYVars =
 {
+	---
+	-- @table Shared
+	-- @field Message name of the message key used in atoms
+	-- @field IsRunning name of the key used for capturing whether LHY is running
+	-- @field Config name of key that carries configuration
 	["Shared"] = {
-		-- Used for posting messages to LHY
 		["Message"] = "lhy_message",
-		
-		-- Used to check whether Run button is pressed
 		["IsRunning"] = "lhy_isrunning",
-
-		-- JSON Encoded configuration
 		["Config"] = "lhy_config"
 	}
 }
