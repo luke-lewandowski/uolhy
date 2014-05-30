@@ -66,6 +66,10 @@ local looterDefinition =
 		local rowHeight = 30
 		local margin = 5
 
+		-- #########################################
+		-- UPPER MAIN MENU
+		-- #########################################
+
 		controls.TLootEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, panel)
 		controls.TLootEnabled.Caption = "Enable Looter"
 		controls.TLootEnabled.Width = buttonSize
@@ -75,7 +79,7 @@ local looterDefinition =
 		controls.TLootEnabled.Checked = Form.Config["looter_IsEnabled"]
 
 		controls.TAutoLoot = Form:AddControl(Obj.Create("TCheckBox"), buttonSize + (margin * 2), margin, panel)
-		controls.TAutoLoot.Caption = "Enable Autoloot"
+		controls.TAutoLoot.Caption = "Enable Autoloot*"
 		controls.TAutoLoot.OnClick = function(sender)
 			Form.Config["looter_autoloot"] = sender.Checked
 			if(sender.Checked) then
@@ -119,26 +123,29 @@ local looterDefinition =
 		end
 		-- TODO Crim looting needs to be implemented
 		controls.TLootAllowCrimLooting.Enabled = false
-		
-		controls.TLootAllowSkinning = Form:AddControl(Obj.Create("TCheckBox"), (margin * 2) + 150, margin, controls.TLootSettingsPanel)
+
+		controls.TLootAllowSkinning = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight, controls.TLootSettingsPanel)
 		controls.TLootAllowSkinning.Caption = "Skin corpses"
 		controls.TLootAllowSkinning.Width = 150
 		controls.TLootAllowSkinning.Checked = Form.Config["looter_useSkinning"]
 		controls.TLootAllowSkinning.OnClick = function(sender)
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
-
-		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, 25, controls.TLootSettingsPanel)
-		controls.THotKeyEdit.Width = buttonSize
+		
+		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, margin, controls.TLootSettingsPanel)
+		controls.THotKeyEdit.Width = 70
+		controls.THotKeyEdit.Height = 20
 		controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
 
-		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 4) + (2 * buttonSize), 25, controls.TLootSettingsPanel)
+		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 7) + (2 * buttonSize), margin, controls.TLootSettingsPanel)
 		controls.THotkeySet.Width = buttonSize
 		controls.THotkeySet.Height = 20
 		controls.THotkeySet.Caption = "Set Hotkey"
 		controls.THotkeySet.OnClick = function(sender)
 			local key1, key2 = controls.THotKeyEdit.Text:match("([^\+]+)\+([^\+]+)")
 
+			-- Very basic validation
+			-- TODO: Check if each key actually exists on the key manager's list
 			if(key1 == nil or key2 == nil) then
 				Form:ShowMessage("Incorrect key combination given. Two keys required separated by + sign. eg. CTRL+B")
 				controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
@@ -151,12 +158,32 @@ local looterDefinition =
 		end
 
 		
-		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TLootSettingsPanel)
-		controls.TLootIgnoreTypes.Caption = "Ignore loot list/loot all"
-		controls.TLootIgnoreTypes.Width = 150
+
+		-- #########################################
+		-- LOOT TYPE SETTINGS
+		-- #########################################
+
+		local toggleLootListArea = function() 
+			local i = not Form.Config["looter_ignoreTypes"]
+
+			controls.TLootTypes.Enabled = i
+			controls.TLooterAddType.Enabled = i
+			controls.TLooterRemoveType.Enabled = i
+		end
+
+		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - (margin) - 18 , margin + 40, panel)
 		controls.TLootIgnoreTypes.Checked = Form.Config["looter_ignoreTypes"]
+		controls.TLootIgnoreTypes.Width = 20
 		controls.TLootIgnoreTypes.OnClick = function(sender)
 			Form.Config["looter_ignoreTypes"] = sender.Checked
+
+			if(sender.Checked) then
+				Form:ShowMessage("Ignoring your loot list. All items will be looted.")
+			else
+				Form:ShowMessage("Loot list enabled. Only items from loot list will be looted.")
+			end
+
+			toggleLootListArea()
 		end
 		
 		controls.TLootTypes = Form:AddControl(Obj.Create("TListBox"), panel.Width - buttonSize - margin, margin, panel)
@@ -224,6 +251,10 @@ local looterDefinition =
 				Form.Config["looter_lootItems"][id] = nil
 			end
 		end
+
+
+		--- Update loot type properties (eg. disable if ignored)
+		toggleLootListArea()
 	end,
 	["ExtraSettings"] = function(config)
 		Form:CreateConfigVar("looter_IsEnabled", false)
