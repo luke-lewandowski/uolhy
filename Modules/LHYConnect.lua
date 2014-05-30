@@ -1,3 +1,6 @@
+--- Used for sending messages between modules.
+-- @module LHYConnect
+
 dofile("LHYVars.lua")
 
 LHYConnect = LHYConnect or {}
