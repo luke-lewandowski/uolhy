@@ -9,7 +9,10 @@ Looter.History = UOExt.Structs.LimitedStack:Create(20)
 -- Looter settings for use with atoms
 Looter.Shared = {
 	["IsRunning"] = "looter_isrunning",
-	["IsLoaded"] = "looter_isloaded"
+	["IsLoaded"] = "looter_isloaded",
+
+    --- Ping used (in form of ticks) so that LHY can see when was the last run.
+    ["LastPing"] = "looter_ping"
 }
 
 -- Main method that needs to be run in order to 
@@ -39,7 +42,7 @@ Looter.Run = function(options)
 		    ["looter_useSkinning"] = true,
 
 		    -- Loot only specific types
-		    ["looter_ignoreTypes"] = false,
+		    ["looter_ignoreTypes"] = false
 		}
 	end
 

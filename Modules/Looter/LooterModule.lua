@@ -68,10 +68,23 @@ local looterDefinition =
 
 		controls.TLootEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, panel)
 		controls.TLootEnabled.Caption = "Enable Looter"
+		controls.TLootEnabled.Width = buttonSize
 		controls.TLootEnabled.OnClick = function(sender)
 			Form.Config["looter_IsEnabled"] = sender.Checked
 		end
 		controls.TLootEnabled.Checked = Form.Config["looter_IsEnabled"]
+
+		controls.TAutoLoot = Form:AddControl(Obj.Create("TCheckBox"), buttonSize + (margin * 2), margin, panel)
+		controls.TAutoLoot.Caption = "Enable Autoloot"
+		controls.TAutoLoot.OnClick = function(sender)
+			Form.Config["looter_autoloot"] = sender.Checked
+			if(sender.Checked) then
+				Form:ShowMessage("Experimental: Looter will automatically detect corpes around you and loot them.")
+			else
+				Form:ShowMessage("Looter set to manual. Press " .. tostring(Form.Config["looter_manualHotkey"]) .. " to loot.")
+			end
+		end
+		controls.TAutoLoot.Checked = Form.Config["looter_autoloot"]
 
 		local updateLootBagButton = function()
 			if(tonumber(UO.BackpackID) == tonumber(Form.Config["looter_containerID"])) then
@@ -114,10 +127,33 @@ local looterDefinition =
 		controls.TLootAllowSkinning.OnClick = function(sender)
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
+
+		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, 25, controls.TLootSettingsPanel)
+		controls.THotKeyEdit.Width = buttonSize
+		controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
+
+		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 4) + (2 * buttonSize), 25, controls.TLootSettingsPanel)
+		controls.THotkeySet.Width = buttonSize
+		controls.THotkeySet.Height = 20
+		controls.THotkeySet.Caption = "Set Hotkey"
+		controls.THotkeySet.OnClick = function(sender)
+			local key1, key2 = controls.THotKeyEdit.Text:match("([^\+]+)\+([^\+]+)")
+
+			if(key1 == nil or key2 == nil) then
+				Form:ShowMessage("Incorrect key combination given. Two keys required separated by + sign. eg. CTRL+B")
+				controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
+				return
+			end
+
+			Form:ShowMessage("Hotkey updated. Might take up to 5 seconds to start working.")
+			Form.Config["looter_manualHotkey"] = string.upper(controls.THotKeyEdit.Text)
+			controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
+		end
+
 		
 		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TLootSettingsPanel)
-		controls.TLootIgnoreTypes.Caption = "Ignore loot type list (loot all)"
-		controls.TLootIgnoreTypes.Width = 250
+		controls.TLootIgnoreTypes.Caption = "Ignore loot list/loot all"
+		controls.TLootIgnoreTypes.Width = 150
 		controls.TLootIgnoreTypes.Checked = Form.Config["looter_ignoreTypes"]
 		controls.TLootIgnoreTypes.OnClick = function(sender)
 			Form.Config["looter_ignoreTypes"] = sender.Checked
@@ -188,8 +224,6 @@ local looterDefinition =
 				Form.Config["looter_lootItems"][id] = nil
 			end
 		end
-
-
 	end,
 	["ExtraSettings"] = function(config)
 		Form:CreateConfigVar("looter_IsEnabled", false)
@@ -210,14 +244,26 @@ local looterDefinition =
 		Form:CreateConfigVar("looter_useSkinning", true)
 		Form:CreateConfigVar("looter_allowCrim", true)
 		Form:CreateConfigVar("looter_ignoreTypes", true)
+		Form:CreateConfigVar("looter_autoloot", false)
+
+		--- Default hotkey for looting
+		Form:CreateConfigVar("looter_manualHotkey", "CTRL+B")
 	end,
 	["Run"] = function(config)
 		-- Check here if status of looter is running
 		if(config.looter_IsEnabled) then
 			local loaded = getatom(Looter.Shared.IsLoaded)
+			local ticks = getatom(Looter.Shared.LastPing)
+			local currentPing = getticks()
+
+			if(loaded ~= nil and (currentPing - ticks) > 60000) then
+				Form:ShowMessage("Lost connection to LooterRua.lua. Open it in new tab and press Start.")
+				return
+			end
 
 			if(loaded == nil) then
 				Form:ShowMessage("Open LooterRun.lua and press Start to run Looter.")
+				return
 			end
 		end
 	end
