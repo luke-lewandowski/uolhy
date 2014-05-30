@@ -30,7 +30,7 @@ while true do
 
 			if(config["looter_autoloot"] ~= true) then
 				sleepTime = 0
-				print("Hotkeys: " .. tostring(key1) .. "+" tostring(key2))
+				print("Hotkeys: " .. tostring(key1) .. "+" .. tostring(key2))
 				-- Manual looting
 				for i=1,50,1 do
 					if(UOExt.KeyManager.IfKeyPressed(key1, key2) == true) then
