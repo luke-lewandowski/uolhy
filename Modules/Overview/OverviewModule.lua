@@ -38,6 +38,17 @@ local overviewDefinition =
 			Form:UpdateTimerStatus()
 		end
 
+		controls.TStayOnTop = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - margin, (rowHeight * 2), panel)
+		controls.TStayOnTop.Caption = "Stay on top"
+		controls.TStayOnTop.Width = buttonSize
+		controls.TStayOnTop.Checked = Form.Config[LHYVars.Shared.StayOnTop]
+		controls.TStayOnTop.OnClick = function(sender)
+			Form.Config[LHYVars.Shared.StayOnTop] = sender.Checked
+
+			Form:ShowMessage("You need to restart LHY to apply this change.")
+		end
+		controls.TStayOnTop.Checked = Form.Config[LHYVars.Shared.StayOnTop]
+
 		-- Message history
 		controls.TMessageBox = Form:AddControl(Obj.Create("TListBox"), margin , margin, panel)
 		controls.TMessageBox.Width = panel.Width - buttonSize - (margin * 3)

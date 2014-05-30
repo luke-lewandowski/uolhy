@@ -31,7 +31,8 @@ LHYMain.Settings = {
 -- @field shardName Name of shard you are logged into.
 local configStructure = {
 	["charName"] = UO.CharName,
-	["shardName"] = UO.Shard
+	["shardName"] = UO.Shard,
+	[LHYVars.Shared.StayOnTop] = false
 }
 
 --- Main method containing main logic for working with modules
@@ -135,8 +136,13 @@ function LHYMain:Create()
 		end
 		ems.Main.Width = 500
 		ems.Main.Height = 150
-		-- TODO Allow user to tick whether they want it to be always on top.
-		--ems.Main.FormStyle = 1 --3 -- Always on top
+
+		if(f.Config[LHYVars.Shared.StayOnTop] ~= nil and f.Config[LHYVars.Shared.StayOnTop] == true) then
+			ems.Main.FormStyle = 3 --3 -- Always on top
+		else
+			f.Config[LHYVars.Shared.StayOnTop] = false
+		end
+
 		ems.Main.BorderStyle = 3 --3 -- Do not allow resize
 
 		-- Application is driven by a timer
