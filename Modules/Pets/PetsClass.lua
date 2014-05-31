@@ -9,41 +9,37 @@ PetsClass.History = UOExt.Structs.LimitedStack:Create(20)
 -- PetsClass settings for use with atoms
 PetsClass.Shared = {
 	["IsRunning"] = "pets_isrunning",
-	["IsLoaded"] = "pets_isloaded"
+	["IsLoaded"] = "pets_isloaded",
+
+    --- Ping used (in form of ticks) so that LHY can see when was the last run.
+    ["LastPing"] = "pets_ping"
 }
 
-PetsClass.ShowOverhead = function(options)
-    if (options == nil) then 
-        return
-    end
-
-    if(options["pets_petsList"] == nil) then
-        return
-    end
-
-    for key,values in pairs(options.pets_petsList) do       
-        local animal = World().WithID(key).InRange(8).Items[1]
-        if(animal ~= nil) then
-            UO.ExMsg(key, tostring(animal.Active.Dist()))
-            wait(1000)
-        end
-    end
-end
+--- Keys used to get configuration for pets module
+PetsClass.ConfKeys = {
+    ["PetsList"] = "pets_petsList",
+    ["Threshold"] = "pets_threshold",
+    ["UseMagery"] = "pets_useMagery",
+    ["ShowDistance"] = "pets_showDistance"
+}
 
 
 PetsClass.Run = function(options)
 	if(options == nil) then
 		options = {
 			-- Pets to look after
-			["pets_petsList"] = {
+			[PetsClass.ConfKeys.PetsList] = {
 				["123"] = "amazing pet" -- Non existant pet
 			},
+
+            -- Threshold to when to use veterinary
+            [PetsClass.ConfKeys.Threshold] = 80,
 
 		    -- Distance from your character to be able to use veterinary
 		    ["pets_vetDistance"] = 2,
 
 		    -- Use skinning looter for corpses around
-		    ["pets_showDistance"] = true,
+		    [PetsClass.ConfKeys.ShowDistance] = true,
 
 		    -- Loot only specific types
 		    ["pets_useMagery"] = true,
@@ -62,53 +58,61 @@ PetsClass.Run = function(options)
 		return
 	end
 
-	local corpses = UOExt.Managers.ItemManager.GetCorpsesWithinRange(options.looter_distance)
+    local CastSpellOnTarget = function(targetID, spellID)
+        local temp = UO.LTargetID
+        UO.LTargetID = targetID
+        UO.Macro(15, spellID) -- Poison
+        UOExt.Core.WaitForTarget()
+        UO.Macro(22, 0) -- Last target
+        UO.LTargetID = temp
+    end
 
-	if(#corpses > 0) then
-        for kcorps,corps in pairs(corpses) do 
-            if(PetsClass.History:valueExists(corps.ID) ~= true) then
-            	-- Open corps
-                corps.Use()
+	for key,pet in pairs(options[PetsClass.ConfKeys.PetsList]) do
+        local tryPet = Ground().WithID(tonumber(key)).Items
 
-                wait(600)
+        if(#tryPet == 1) then
+            local pet = tryPet[1]
 
-            	if(options.looter_useSkinning)then
-        			LHYConnect.PostMessage("Running skinner")
-            		UOExt.Managers.SkinningManager.CutAndLoot(corps)
-            	end
+            if(pet ~= nil) then
+                UO.StatBar(pet.ID)
 
-            	wait(2000)
+                -- Replace this with wait for gump
+                wait(300)
 
-            	local items = {}
+                local health, col = GetHitBarLife(pet.ID)
+                local dist = pet.Active.Dist()
 
-            	if(options.looter_ignoreTypes)then
-            		-- Loot all
-            		items = World().InContainer(corps.ID).Items
-            	else
-            		-- Any other body. Use selected types.
-            		print("Looking for following types")
-            		for k,v in pairs(UOExt.TableUtils.GetKeys(options.looter_lootItems)) do
-            			print(k,v)
-            		end
+                -- Make sure its always a number
+                health = UOExt.Core.ConvertToInt(health)
 
-        			items = World().WithType(UOExt.TableUtils.GetKeys(options.looter_lootItems)).InContainer(corps.ID).Items
-            	end
+                -- Cure is most important
+                if(col ~= nil and col == "green") then
+                    -- Cast cure & check fore regs for that
+                    -- TODO
+                    CastSpellOnTarget(pet.ID, 10)
+                    UO.ExMsg(pet.ID, "Casting cure on this fela")
+                end
 
-            	LHYConnect.PostMessage(("Found items to loot: " .. #items))
+                if(health ~= nil and tonumber(health) < options[PetsClass.ConfKeys.Threshold]) then
+                    local bandages = UOExt.Managers.ItemManager.GetItemFromContainer(3617, UO.BackpackID)
 
-        		if(#items > 0)then
-    				for kitem,item in pairs(items) do
-    					if(string.len(item.Name) > 0) then
-    						LHYConnect.PostMessage(("Moving " .. item.Name))
-			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
-    					else
-    						LHYConnect.PostMessage("Skipping item with no name.")
-			            end
-			        end
-			        LHYConnect.PostMessage("Done looting.")
-        		end
+                    if(pet.Active.Dist() < 2 and bandages["ID"] ~= nil) then
+                        -- Use bandages
+                        UO.ExMsg(pet.ID, "Using bandages on pet")
+                        UOExt.Managers.ItemManager.UseItemOnItem(bandages, pet)
+                        wait(5000)
+                    elseif(options[PetsClass.ConfKeys.UseMagery] and health > 0) then
+                        -- Use GH here
+                        CastSpellOnTarget(pet.ID, 28)
+                        UO.ExMsg(pet.ID, "Casting GH on pet")
+                        wait(5000)
+                    end
+                end
 
-        		PetsClass.History:push(corps.ID)
+                -- Only do it when its enabled and health is below 100%
+                if(options[PetsClass.ConfKeys.ShowDistance] and health < 100) then
+                    UO.ExMsg(pet.ID, (tostring(pet.Active.Dist()) .. "/" .. tostring(health) .. "%"))
+                end
             end
         end
     end

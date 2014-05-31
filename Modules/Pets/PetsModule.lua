@@ -73,23 +73,6 @@ local looterDefinition =
 		end
 		controls.TPetsEnabled.Checked = Form.Config["pets_IsEnabled"]
 
-		-- local updateLootBagButton = function()
-		-- 	if(tonumber(UO.BackpackID) == tonumber(Form.Config["pets_containerID"])) then
-		-- 		controls.TSetLootBag.Caption = "Cont: Backpack"
-		-- 	else
-		-- 		controls.TSetLootBag.Caption = "Cont: " .. Form.Config["pets_containerID"]
-		-- 	end
-		-- end
-		-- controls.TSetLootBag = Form:AddControl(Obj.Create("TButton"), panel.Width - (buttonSize * 2) - (margin * 6), margin, panel)
-		-- updateLootBagButton()
-		-- controls.TSetLootBag.Width = buttonSize
-		-- controls.TSetLootBag.Height = 20
-		-- controls.TSetLootBag.OnClick = function(sender)
-		-- 	Form:ShowMessage("Select new looting bag... or wait 6 seconds to set it to your backpack")
-		-- 	Form.Config["pets_containerID"] = UOExt.Managers.ItemManager.GetTargetID(UO.BackpackID)
-		-- 	updateLootBagButton()
-		-- end
-
 		controls.TPetsSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, 25, panel)
 		controls.TPetsSettingsPanel.Width = panel.Width - buttonSize - (margin) - 30
 		controls.TPetsSettingsPanel.Height = panel.Height - 30
@@ -100,9 +83,9 @@ local looterDefinition =
 		controls.TUseMagery = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, controls.TPetsSettingsPanel)
 		controls.TUseMagery.Caption = "Use magery when out of range"
 		controls.TUseMagery.Width = 200
-		controls.TUseMagery.Checked = Form.Config["pets_useMagery"]
+		controls.TUseMagery.Checked = Form.Config[PetsClass.ConfKeys.UseMagery]
 		controls.TUseMagery.OnClick = function(sender)
-			Form.Config["pets_useMagery"] = sender.Checked
+			Form.Config[PetsClass.ConfKeys.UseMagery] = sender.Checked
 		end
 		
 		controls.TDistanceAbovePet = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TPetsSettingsPanel)
@@ -113,18 +96,10 @@ local looterDefinition =
 			Form.Config["pets_showDistance"] = sender.Checked
 		end
 		
-		-- controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), margin, 30, controls.TPetsSettingsPanel)
-		-- controls.TLootIgnoreTypes.Caption = "Pets"
-		-- controls.TLootIgnoreTypes.Width = 250
-		-- controls.TLootIgnoreTypes.Checked = Form.Config["pets_ignoreTypes"]
-		-- controls.TLootIgnoreTypes.OnClick = function(sender)
-		-- 	Form.Config["pets_ignoreTypes"] = sender.Checked
-		-- end
-		
 		controls.TPets = Form:AddControl(Obj.Create("TListBox"), panel.Width - buttonSize - margin, margin, panel)
 		controls.TPets.Height = panel.Height - (2 * margin)
 		controls.TPets.Width = buttonSize
-		for k,v in pairs(UOExt.TableUtils.CombineKeyWithValue(Form.Config["pets_petsList"], ",")) do
+		for k,v in pairs(UOExt.TableUtils.CombineKeyWithValue(Form.Config[PetsClass.ConfKeys.PetsList], ",")) do
 			controls.TPets.Items.Add(tostring(v))
 		end
 
@@ -141,8 +116,8 @@ local looterDefinition =
 			if(newItem > 0) then
 				local item = World().WithID(newItem).Items[1]
 				if(item ~= nil and item.Type ~= nil) then
-					local exists = Form.Config["pets_petsList"][item.ID] ~= nil
-					if(Form.Config["pets_petsList"][tostring(item.ID)] == nil) then
+					local exists = Form.Config[PetsClass.ConfKeys.PetsList][item.ID] ~= nil
+					if(Form.Config[PetsClass.ConfKeys.PetsList][tostring(item.ID)] == nil) then
 						local nameArr = {}
 
 						-- Sometimes names contain other characters - filter it
@@ -158,7 +133,7 @@ local looterDefinition =
 						end
 
 						Form:ShowMessage(name .. " added to pet list")
-						Form.Config["pets_petsList"][tostring(item.ID)] = name
+						Form.Config[PetsClass.ConfKeys.PetsList][tostring(item.ID)] = name
 
 						controls.TPets.Items.Add(tostring(item.ID) .. "," .. name)
 					else
@@ -183,9 +158,9 @@ local looterDefinition =
 				controls.TPets.Items.Delete(tonumber(index))
 				Form:ShowMessage("Removed " .. name .. " from pet list")
 
-				Form.Config["pets_petsList"][id] = nil
+				Form.Config[PetsClass.ConfKeys.PetsList][id] = nil
 
-				for k,v in pairs(Form.Config["pets_petsList"]) do
+				for k,v in pairs(Form.Config[PetsClass.ConfKeys.PetsList]) do
 					print(k,v)
 				end
 			end
@@ -195,15 +170,17 @@ local looterDefinition =
 	end,
 	["ExtraSettings"] = function(config)
 		Form:CreateConfigVar("pets_IsEnabled", false)
-		Form:CreateConfigVar("pets_petsList",
+		Form:CreateConfigVar(PetsClass.ConfKeys.PetsList,
 			-- Items to loot
 			{
-				["123"] = "amazing pet" -- Non existant pet
+				["123"] = "amazingpet" -- Non existant pet
 			}
 		)
 		Form:CreateConfigVar("pets_vetDistance",2)
 		Form:CreateConfigVar("pets_showDistance", true)
-		Form:CreateConfigVar("pets_useMagery", true)
+		Form:CreateConfigVar(PetsClass.ConfKeys.UseMagery, true)
+		print(PetsClass.ConfKeys.Threshold)
+		Form:CreateConfigVar(PetsClass.ConfKeys.Threshold, 80)
 	end,
 	["Run"] = function(config)
 		-- Check here if status of looter is running
@@ -213,6 +190,20 @@ local looterDefinition =
 			if(loaded == nil) then
 				Form:ShowMessage("Open PetsRun.lua and press Start to run Pets.")
 			end
+		end
+
+		local loaded = getatom(PetsClass.Shared.IsLoaded)
+		local ticks = getatom(PetsClass.Shared.LastPing)
+		local currentPing = getticks()
+
+		if(loaded ~= nil and (currentPing - ticks) > 60000) then
+			Form:ShowMessage("Lost connection to PetsRun.lua. Open it in new tab and press Start.")
+			return
+		end
+
+		if(loaded == nil) then
+			Form:ShowMessage("Open PetsRun.lua and press Start to run Pets.")
+			return
 		end
 	end
 }

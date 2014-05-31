@@ -14,26 +14,36 @@ setatom(PetsClass.Shared.IsLoaded, true)
 while true do
 	-- Check if LHY is running
 	local lhyrunning = getatom(LHYVars.Shared.IsRunning)
+	local sleepTime = 2000
 
 	if(lhyrunning ~= nil and lhyrunning == true) then
-		-- Mark Pets as "running"
-		setatom(PetsClass.Shared.IsRunning, true)
-		
 		-- Get config from LHY
+		-- Expensive call. Lets not make it too often.
 		local config = json.decode(getatom(LHYVars.Shared.Config))
+
 		if(config ~= nil) then
-			-- Health print out is handled in timer in UI
+			sleepTime = 100
+			for i=1,10 do
 
-			print("...")
-			--Looter.Run(config)
+				-- Mark Pets as "running"
+				setatom(PetsClass.Shared.IsRunning, true)
+				setatom(PetsClass.Shared.LastPing, getticks())
+				
+				if(config ~= nil) then
+					print("...")
+					PetsClass.Run(config)
+				else
+					print("Something wrong with config. Check if LHY.lua is running.")
+				end
+
+				wait(1000)
+			end
 		else
-			print("Something wrong with config. Check if LHY.lua is running.")
+			sleepTime = 5000
 		end
-
-		
 	else
 		print("Start LHY.lua first and press Run")
 	end
 
-	wait(1000)
+	wait(sleepTime)
 end
