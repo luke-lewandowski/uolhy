@@ -146,22 +146,21 @@ local looterDefinition =
 						local nameArr = {}
 
 						-- Sometimes names contain other characters - filter it
-						local names = {}
+						UO.StatBar(item.ID)
+						wait(200)
+						local name = item.Active.Name()
 
-						string.gsub(item.Name, "(%w+)", function(s)
-								if(string.match(s, "%d") == nil) then
-									table.insert(names, s) 
-								end
-							end
-						)
+						if(name == nil or string.len(tostring(name)) == 0)then
+							name = "unknown"
+							Form:ShowMessage("Unable to get pet's name. This doesn't mean that pet will not be healed! You welcome to try re-add this pet again later to get his name displayed properly.")
+						else
+							name = UOExt.Core.Trim(name)
+						end
 
-						print(item.Name)
+						Form:ShowMessage(name .. " added to pet list")
+						Form.Config["pets_petsList"][tostring(item.ID)] = name
 
-						local name = table.concat(names, " ")
-
-						Form:ShowMessage(tostring(name) .. " added to pet list")
-						Form.Config["pets_petsList"][item.ID] = name
-						controls.TPets.Items.Add(tostring(item.ID) .. "," .. tostring(name))
+						controls.TPets.Items.Add(tostring(item.ID) .. "," .. name)
 					else
 						Form:ShowMessage("Pet already on the list!")
 					end
@@ -181,12 +180,14 @@ local looterDefinition =
 			if(index > -1) then
 				local toRemove = controls.TPets.Items.GetString(index)
 				local id, name = toRemove:match("([^,]+),([^,]+)")
-				local message = ""
-
 				controls.TPets.Items.Delete(tonumber(index))
 				Form:ShowMessage("Removed " .. name .. " from pet list")
 
 				Form.Config["pets_petsList"][id] = nil
+
+				for k,v in pairs(Form.Config["pets_petsList"]) do
+					print(k,v)
+				end
 			end
 		end
 
