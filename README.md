@@ -1,6 +1,7 @@
 Ultima Online:LemiHelpYou
 =====
 A very simple script assistant for Ultima Online. It is written in LUA/OpenEasyUO.
+![UO:LHY v.0.9 Screenshot](http://i.imgur.com/CM6btyC.png)
 
 What is it?
 =====
