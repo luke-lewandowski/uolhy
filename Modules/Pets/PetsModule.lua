@@ -179,7 +179,6 @@ local looterDefinition =
 		Form:CreateConfigVar("pets_vetDistance",2)
 		Form:CreateConfigVar("pets_showDistance", true)
 		Form:CreateConfigVar(PetsClass.ConfKeys.UseMagery, true)
-		print(PetsClass.ConfKeys.Threshold)
 		Form:CreateConfigVar(PetsClass.ConfKeys.Threshold, 80)
 	end,
 	["Run"] = function(config)
