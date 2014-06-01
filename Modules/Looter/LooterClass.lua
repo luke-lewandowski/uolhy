@@ -63,6 +63,8 @@ Looter.Run = function(options)
         return true
     end
 
+    local itemsToLoot = UOExt.TableUtils.GetKeys(options.looter_lootItems)
+
 	if(#corpses > 0) then
         for kcorps,corps in pairs(corpses) do 
             if(Looter.History:valueExists(corps.ID) ~= true) then
@@ -75,15 +77,14 @@ Looter.Run = function(options)
                     wait(300)
                 end
 
-                local journal = NewJournal()
+                --local journal = NewJournal()
 
-                print(options.looter_useSkinning)
             	if(options.looter_useSkinning)then
                     LHYConnect.PostMessage("Running skinner")
                     local knife = UOExt.Managers.SkinningManager.FindKnife()
                     if(knife ~= nil) then
                         -- Add hides to be looted
-                        table.insert(items, 4217)
+                        table.insert(itemsToLoot, 4217)
                         -- Cut corps
                         UOExt.Managers.SkinningManager.CutCorps(corps.ID, knife)
 
@@ -106,8 +107,7 @@ Looter.Run = function(options)
 
                 if(#allItems > 0 and options.looter_ignoreTypes == false) then
                     for ak,av in pairs(allItems) do
-                        print(av.Type)
-                        for k,v in pairs(UOExt.TableUtils.GetKeys(options.looter_lootItems)) do
+                        for k,v in pairs(itemsToLoot) do
                             if((av.Type ~= nil and v ~= nil) and tonumber(av.Type) == tonumber(v)) then
                                 table.insert(items, av)
                             end
@@ -121,8 +121,9 @@ Looter.Run = function(options)
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
-    					if(string.len(item.Name) > 0) then
-    						LHYConnect.PostMessage(("Moving " .. item.Name))
+                        print(item)
+    					if(item ~= nil and string.len(item.Active.Name()) > 0 and item.ContID == corps.ID) then
+    						LHYConnect.PostMessage(("Moving " .. item.Active.Name()))
 			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
 
                             if(reCheckAvailbility(journal) ~= true) then
@@ -138,6 +139,7 @@ Looter.Run = function(options)
 
                 -- Cut hides
                 if(options.looter_useSkinning)then
+                    wait(500)
                     LHYConnect.PostMessage("Cutting hides")
                     local scissors = UOExt.Managers.SkinningManager.FindScissors()
                     if(scissors ~= nil) then
