@@ -33,7 +33,7 @@ PetsClass.Run = function(options)
 			},
 
             -- Threshold to when to use veterinary
-            [PetsClass.ConfKeys.Threshold] = 80,
+            [PetsClass.ConfKeys.Threshold] = 98,
 
 		    -- Distance from your character to be able to use veterinary
 		    ["pets_vetDistance"] = 2,
@@ -100,14 +100,20 @@ PetsClass.Run = function(options)
                         -- Use bandages
                         UO.ExMsg(pet.ID, "Using bandages on pet")
                         UOExt.Managers.ItemManager.UseItemOnItem(bandages, pet)
-                        wait(5000)
-                    elseif(options[PetsClass.ConfKeys.UseMagery] and health > 0) then
+						repeat
+							local nNewRef,nCnt= UO.ScanJournal(0)
+							local sLine,nCol = UO.GetJournal(0)
+							wait(50)
+						until (sLine == "You finish applying the bandages.")  or (sLine == "That is too far away.") or (sLine == "You did not stay close enough to heal your patient!") or (sLine == "That being is not damaged!")or (sLine == "You have cured the target of all poisons!")
+                    elseif(options[PetsClass.ConfKeys.UseMagery] and health > 0 and UO.Mana > 10) then
                         -- Use GH here
+			-- Make sure that you have over 10 mana otherwise it will keep trying to cast with not enough mana.
                         CastSpellOnTarget(pet.ID, 28)
                         UO.ExMsg(pet.ID, "Casting GH on pet")
                         wait(5000)
                     end
                 end
+
 
                 -- Only do it when its enabled and health is below 100%
                 if(options[PetsClass.ConfKeys.ShowDistance] and health < 100) then
