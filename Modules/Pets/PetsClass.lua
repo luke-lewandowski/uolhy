@@ -86,7 +86,7 @@ PetsClass.Run = function(options)
                 health = UOExt.Core.ConvertToInt(health)
 
                 -- Cure is most important
-                if(col ~= nil and col == "green") then
+                if(col ~= nil and col == "green" and options[PetsClass.ConfKeys.UseMagery]) then
                     -- Cast cure & check fore regs for that
                     -- TODO
                     CastSpellOnTarget(pet.ID, 10)
