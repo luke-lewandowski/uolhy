@@ -55,10 +55,10 @@ Looter.Run = function(options)
 
     --- Check if journal states something being too far or out of sight
     local reCheckAvailbility = function(journalObject)
-        if(journalObject:Find("far away", "seen")) then
-            LHYConnect.PostMessage("Unable to loot. Get closer to corps and try again.")
-            return false
-        end
+        --if(journalObject:Find("far away", "seen")) then
+        --    LHYConnect.PostMessage("Unable to loot. Get closer to corps and try again.")
+        --    return false
+        --end
 
         return true
     end
@@ -128,6 +128,7 @@ Looter.Run = function(options)
                             if(reCheckAvailbility(journal) ~= true) then
                                 return
                             end
+                            wait(600)
     					else
     						LHYConnect.PostMessage("Skipping item with no name.")
 			            end
