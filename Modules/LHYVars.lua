@@ -15,6 +15,7 @@ LHYVars =
 	["Shared"] = {
 		["Message"] = "lhy_message",
 		["IsRunning"] = "lhy_isrunning",
-		["Config"] = "lhy_config"
+		["Config"] = "lhy_config",
+		["StayOnTop"] = "lhy_stayontop"
 	}
 }
