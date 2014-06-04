@@ -19,6 +19,7 @@ Looter.Shared = {
 -- 1. Find corpses around you
 -- 2. Loot & skin them (if selected)
 Looter.Run = function(options)
+	local journal = journal:new()
 	if(options == nil) then
 		options = {
 			-- Items to loot
@@ -70,11 +71,10 @@ Looter.Run = function(options)
 
     --- Check if journal states something being too far or out of sight
     local reCheckAvailbility = function(journalObject)
-        --if(journalObject:Find("far away", "seen")) then
-        --    LHYConnect.PostMessage("Unable to loot. Get closer to corps and try again.")
-        --    return false
-        --end
-
+        if(journal:find("far away", "seen") == 1) then
+            LHYConnect.PostMessage("Unable to loot. Get closer to corps and try again.")
+            return false
+        end
         return true
     end
 
