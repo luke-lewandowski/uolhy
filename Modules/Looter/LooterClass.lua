@@ -25,11 +25,26 @@ Looter.Run = function(options)
 			-- Note: If its detected that corps belongs to you 
 			-- then it will loot all items
 			["looter_lootItems"] = {
-				["3821"] = "gold", -- Gold
-
+				-- Important Stuff
+				["3821"] = "Gold", -- Gold
+				-- Reagents
+				["3981"] = "Spiders Silk", -- Spiders Silk
+				["3962"] = "Black Pearl", -- Black Pearl
+				["3974"] = "Mandrake Root", -- Mandrake Root
+				["3976"] = "Nightshade", -- Nightshade
+				["3972"] = "Garlic", -- Garlic
+				["3980"] = "Sulfurous Ash", -- Sulfurous Ashe
+				["3973"] = "Ginseng", -- Ginseng
+				["3963"] = "Blood Moss", -- Blood Moss		
 				-- Rocks
-				["3859"] = "ruby", -- Ruby
-				["3877"] = "amber" -- Amber
+				["3859"] = "Ruby", -- Ruby
+				["3877"] = "Amber", -- Amber
+				["3862"] = "Amethyst", -- Amethyst
+				["3873"] = "Star Sapphire", -- Star Sapphire
+				["3856"] = "Emerald", -- Emerald
+				["3878"] = "Diamond", -- Diamond
+				["3865"] = "Sapphire", -- Sapphire
+				["3861"] = "Citrine" -- Citrine
 			},
 
 			-- Container of where to place all the loot
