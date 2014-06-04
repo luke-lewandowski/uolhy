@@ -23,23 +23,27 @@ while true do
 
 		if(config ~= nil) then
 			sleepTime = 100
-			for i=1,10 do
+			-- Mark Pets as "running"
+			setatom(PetsClass.Shared.IsRunning, true)
+			setatom(PetsClass.Shared.LastPing, getticks())
+			
+			local key1, key2 = config[PetsClass.Shared.HotKey]:match("([^\+]+)\+([^\+]+)")
 
-				-- Mark Pets as "running"
-				setatom(PetsClass.Shared.IsRunning, true)
-				setatom(PetsClass.Shared.LastPing, getticks())
-				
-				if(config ~= nil) then
-					print("...")
+			for i=1,50,1 do
+				if(UOExt.KeyManager.IfKeyPressed(key1, key2) == true) then
+					print("Starting manual healing.")
 					PetsClass.Run(config)
-				else
-					print("Something wrong with config. Check if LHY.lua is running.")
 				end
-
-				wait(1000)
+				if(i%10 == 0) then
+					PetsClass.ShowDistance(config)
+				end
+				wait(100)
 			end
+
+			PetsClass.ShowDistance(config)
 		else
 			sleepTime = 5000
+			print("Something wrong with config. Check if LHY.lua is running.")
 		end
 	else
 		print("Start LHY.lua first and press Run")

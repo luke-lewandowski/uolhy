@@ -121,7 +121,6 @@ Looter.Run = function(options)
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
-                        print(item)
     					if(item ~= nil and string.len(item.Active.Name()) > 0 and item.ContID == corps.ID) then
     						LHYConnect.PostMessage(("Moving " .. item.Active.Name()))
 			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)

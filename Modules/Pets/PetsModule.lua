@@ -81,7 +81,7 @@ local looterDefinition =
 		-- SETTINGS
 		-- #########################################
 		controls.TUseMagery = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, controls.TPetsSettingsPanel)
-		controls.TUseMagery.Caption = "Use magery when out of range"
+		controls.TUseMagery.Caption = "Allow Magery use"
 		controls.TUseMagery.Width = 200
 		controls.TUseMagery.Checked = Form.Config[PetsClass.ConfKeys.UseMagery]
 		controls.TUseMagery.OnClick = function(sender)
@@ -166,6 +166,30 @@ local looterDefinition =
 			end
 		end
 
+		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, margin, controls.TPetsSettingsPanel)
+		controls.THotKeyEdit.Width = 70
+		controls.THotKeyEdit.Height = 20
+		controls.THotKeyEdit.Text = Form.Config[PetsClass.Shared.HotKey]
+
+		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 7) + (2 * buttonSize), margin, controls.TPetsSettingsPanel)
+		controls.THotkeySet.Width = buttonSize
+		controls.THotkeySet.Height = 20
+		controls.THotkeySet.Caption = "Set Hotkey"
+		controls.THotkeySet.OnClick = function(sender)
+			local key1, key2 = controls.THotKeyEdit.Text:match("([^\+]+)\+([^\+]+)")
+
+			-- Very basic validation
+			-- TODO: Check if each key actually exists on the key manager's list
+			if(key1 == nil or key2 == nil) then
+				Form:ShowMessage("Incorrect key combination given. Two keys required separated by + sign. eg. CTRL+B")
+				controls.THotKeyEdit.Text = Form.Config[PetsClass.Shared.HotKey]
+				return
+			end
+
+			Form:ShowMessage("Hotkey updated. Might take up to 5 seconds to start working.")
+			Form.Config[PetsClass.Shared.HotKey] = string.upper(controls.THotKeyEdit.Text)
+			controls.THotKeyEdit.Text = Form.Config[PetsClass.Shared.HotKey]
+		end
 
 	end,
 	["ExtraSettings"] = function(config)
@@ -176,10 +200,13 @@ local looterDefinition =
 				["123"] = "amazingpet" -- Non existant pet
 			}
 		)
-		Form:CreateConfigVar("pets_vetDistance",2)
-		Form:CreateConfigVar("pets_showDistance", true)
+		Form:CreateConfigVar(PetsClass.ConfKeys.Distance,2)
+		Form:CreateConfigVar(PetsClass.ConfKeys.ShowDistance, true)
 		Form:CreateConfigVar(PetsClass.ConfKeys.UseMagery, true)
 		Form:CreateConfigVar(PetsClass.ConfKeys.Threshold, 80)
+
+		--- Default hotkey for looting
+		Form:CreateConfigVar(PetsClass.Shared.HotKey, "CTRL+N")
 	end,
 	["Run"] = function(config)
 		-- Check here if status of looter is running
