@@ -29,18 +29,18 @@ while true do
 			
 			local key1, key2 = config[PetsClass.Shared.HotKey]:match("([^\+]+)\+([^\+]+)")
 
-			for i=1,50,1 do
+			for i=1,80,1 do
 				if(UOExt.KeyManager.IfKeyPressed(key1, key2) == true) then
-					print("Starting manual healing.")
+					LHYConnect.PostMessage("Starting manual healing.")
 					PetsClass.Run(config)
+					LHYConnect.PostMessage("Healing done.")
 				end
-				if(i%10 == 0) then
+
+				if(config[PetsClass.ConfKeys.ShowDistance] and i%40 == 0) then
 					PetsClass.ShowDistance(config)
 				end
 				wait(100)
 			end
-
-			PetsClass.ShowDistance(config)
 		else
 			sleepTime = 5000
 			print("Something wrong with config. Check if LHY.lua is running.")

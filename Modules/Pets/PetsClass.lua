@@ -105,7 +105,10 @@ PetsClass.Run = function(options)
         UO.LTargetID = temp
     end
 
-	for key,pet in pairs(options[PetsClass.ConfKeys.PetsList]) do
+    local petPool = {}
+
+    --- Collect info about specific pets so that we can process them in order
+    for key,pet in pairs(options[PetsClass.ConfKeys.PetsList]) do
         local tryPet = Ground().WithID(tonumber(key)).Items
 
         if(#tryPet == 1) then
@@ -113,44 +116,64 @@ PetsClass.Run = function(options)
 
             if(pet ~= nil) then
                 UO.StatBar(pet.ID)
-
-                -- Replace this with wait for gump
-                wait(300)
-
                 local health, col = GetHitBarLife(pet.ID)
                 local dist = pet.Active.Dist()
 
                 -- Make sure its always a number
                 health = UOExt.Core.ConvertToInt(health)
 
-                -- Cure is most important
-                if(col ~= nil and col == "green" and options[PetsClass.ConfKeys.UseMagery]) then
-                    -- Cast cure & check fore regs for that
-                    -- TODO
-                    CastSpellOnTarget(pet.ID, 10)
-                    UO.ExMsg(pet.ID, "Casting cure on this fela")
-                end
+                pet["health"] = health
+                pet["healthcol"] = col
 
-                if(health ~= nil and tonumber(health) < options[PetsClass.ConfKeys.Threshold]) then
-                    local bandages = UOExt.Managers.ItemManager.GetItemFromContainer(3617, UO.BackpackID)
+                table.insert(petPool, pet)
+            end
+        end
+    end
 
-                    if(pet.Active.Dist() < options[PetsClass.ConfKeys.Distance] and bandages["ID"] ~= nil) then
-                        -- Use bandages
-                        UO.ExMsg(pet.ID, "Using bandages on pet")
-                        UOExt.Managers.ItemManager.UseItemOnItem(bandages, pet)
-						repeat
-							local nNewRef,nCnt= UO.ScanJournal(0)
-							local sLine,nCol = UO.GetJournal(0)
-							wait(50)
-						until (sLine == "You finish applying the bandages.")  or (sLine == "That is too far away.") or (sLine == "You did not stay close enough to heal your patient!") or (sLine == "That being is not damaged!")or (sLine == "You have cured the target of all poisons!")
-                    elseif(options[PetsClass.ConfKeys.UseMagery] and health > 0 and UO.Mana > 10) then
-                        -- Use GH here
-						-- Make sure that you have over 10 mana otherwise it will keep trying to cast with not enough mana.
-                        CastSpellOnTarget(pet.ID, 28)
-                        UO.ExMsg(pet.ID, "Casting GH on pet")
-                        wait(5000)
-                    end
-                end
+    -- TODO sort it by health here so that we can attend to sicker pets first
+
+    local journal = journal:new()
+    local message = ""
+    local actionTimeOut = 5000
+
+	for key,pet in pairs(petPool) do
+        -- Cure is most important
+        if(pet.healthcol ~= nil and pet.healthcol == "green" and options[PetsClass.ConfKeys.UseMagery]) then
+            -- Cast cure & check fore regs for that
+            -- TODO Check for regs.
+            CastSpellOnTarget(pet.ID, 10)
+
+            message = "Casting cure on this fela"
+            LHYConnect.PostMessage(message)
+            UO.ExMsg(pet.ID, message)
+        end
+
+        if(pet.health ~= nil and tonumber(pet.health) < options[PetsClass.ConfKeys.Threshold]) then
+            local bandages = UOExt.Managers.ItemManager.GetItemFromContainer(3617, UO.BackpackID)
+
+            if(pet.Active.Dist() < options[PetsClass.ConfKeys.Distance] and bandages["ID"] ~= nil) then
+                -- Use bandages
+                message = "Using bandages on pet"
+                LHYConnect.PostMessage(message)
+                UO.ExMsg(pet.ID, message)
+
+                journal:clear()
+                local time = actionTimeOut
+                UOExt.Managers.ItemManager.UseItemOnItem(bandages, pet)
+				repeat
+                    time = time - 50
+					wait(50)
+                    -- TODO fix issue here with getting stuck when pet is dead.
+                until journal:find("finish", "too far away", "close") ~= nil or time < 0
+				--until (sLine == "You finish applying the bandages.")  or (sLine == "That is too far away.") or (sLine == "You did not stay close enough to heal your patient!") or (sLine == "That being is not damaged!")or (sLine == "You have cured the target of all poisons!")
+            elseif(options[PetsClass.ConfKeys.UseMagery] and pet.health > 0 and UO.Mana > 10) then
+                -- Use GH here
+				-- Make sure that you have over 10 mana otherwise it will keep trying to cast with not enough mana.
+                CastSpellOnTarget(pet.ID, 28)
+                message = "Casting GH on pet"
+                LHYConnect.PostMessage(message)
+                UO.ExMsg(pet.ID, message)
+                wait(5000)
             end
         end
     end
