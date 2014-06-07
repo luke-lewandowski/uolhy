@@ -213,23 +213,17 @@ local looterDefinition =
 		if(config.pets_IsEnabled) then
 			local loaded = getatom(PetsClass.Shared.IsLoaded)
 
+			local ticks = getatom(PetsClass.Shared.LastPing)
+			local currentPing = getticks()
+
+			if(loaded ~= nil and (currentPing - ticks) > 60000) then
+				Form:ShowMessage("Lost connection to PetsRun.lua. Open it in new tab and press Start.")
+				return
+			end
+
 			if(loaded == nil) then
 				Form:ShowMessage("Open PetsRun.lua and press Start to run Pets.")
 			end
-		end
-
-		local loaded = getatom(PetsClass.Shared.IsLoaded)
-		local ticks = getatom(PetsClass.Shared.LastPing)
-		local currentPing = getticks()
-
-		if(loaded ~= nil and (currentPing - ticks) > 60000) then
-			Form:ShowMessage("Lost connection to PetsRun.lua. Open it in new tab and press Start.")
-			return
-		end
-
-		if(loaded == nil) then
-			Form:ShowMessage("Open PetsRun.lua and press Start to run Pets.")
-			return
 		end
 	end
 }
