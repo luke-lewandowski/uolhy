@@ -22,7 +22,7 @@ LHYMain.Settings = {
 	-- Make sure that each time module is called that config is propagated across.
 	-- If set to false, modules will be using "Saved" version of the config.
 	["propagateConfigEachRun"] = true,
-	["version"] = "0.9"
+	["version"] = "0.9.1"
 }
 
 --- Very basic configuration for LHY - this should be extended by modules.
