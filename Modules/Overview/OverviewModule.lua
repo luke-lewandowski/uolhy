@@ -56,7 +56,7 @@ local overviewDefinition =
 
 		-- Timer for capturing all messages send from LHYConnect
 		controls.MsgTimer = Obj.Create("TTimer")
-		controls.MsgTimer.Interval = 1000
+		controls.MsgTimer.Interval = 300
 		controls.MsgTimer.OnTimer = function(sender)
 			if(LHYConnect.GetMessage() ~= nil) then
 				local msg = LHYConnect.GetMessage()

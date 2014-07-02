@@ -22,7 +22,7 @@ LHYMain.Settings = {
 	-- Make sure that each time module is called that config is propagated across.
 	-- If set to false, modules will be using "Saved" version of the config.
 	["propagateConfigEachRun"] = true,
-	["version"] = "0.9"
+	["version"] = "1.0.0"
 }
 
 --- Very basic configuration for LHY - this should be extended by modules.
@@ -67,6 +67,15 @@ function LHYMain:Create()
 			end
 		end
 	end
+
+	--- Find all atoms and wipe them (in case LHY was restarted)
+	local _curAtoms = listatoms("")
+	if(_curAtoms ~= nil and #_curAtoms > 0) then
+		for k,v in pairs(_curAtoms) do
+			setatom(v, nil)
+		end
+	end
+	
 
 	-- ############################# --
 	-- PUBLIC METHODS

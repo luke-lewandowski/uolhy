@@ -19,17 +19,31 @@ Looter.Shared = {
 -- 1. Find corpses around you
 -- 2. Loot & skin them (if selected)
 Looter.Run = function(options)
+	local journal = journal:new()
 	if(options == nil) then
 		options = {
 			-- Items to loot
-			-- Note: If its detected that corps belongs to you 
-			-- then it will loot all items
 			["looter_lootItems"] = {
-				["3821"] = "gold", -- Gold
-
+				-- Important Stuff
+				["3821"] = "Gold", -- Gold
+				-- Reagents
+				["3981"] = "Spiders Silk", -- Spiders Silk
+				["3962"] = "Black Pearl", -- Black Pearl
+				["3974"] = "Mandrake Root", -- Mandrake Root
+				["3976"] = "Nightshade", -- Nightshade
+				["3972"] = "Garlic", -- Garlic
+				["3980"] = "Sulfurous Ash", -- Sulfurous Ashe
+				["3973"] = "Ginseng", -- Ginseng
+				["3963"] = "Blood Moss", -- Blood Moss		
 				-- Rocks
-				["3859"] = "ruby", -- Ruby
-				["3877"] = "amber" -- Amber
+				["3859"] = "Ruby", -- Ruby
+				["3877"] = "Amber", -- Amber
+				["3862"] = "Amethyst", -- Amethyst
+				["3873"] = "Star Sapphire", -- Star Sapphire
+				["3856"] = "Emerald", -- Emerald
+				["3878"] = "Diamond", -- Diamond
+				["3865"] = "Sapphire", -- Sapphire
+				["3861"] = "Citrine" -- Citrine
 			},
 
 			-- Container of where to place all the loot
@@ -55,11 +69,10 @@ Looter.Run = function(options)
 
     --- Check if journal states something being too far or out of sight
     local reCheckAvailbility = function(journalObject)
-        --if(journalObject:Find("far away", "seen")) then
-        --    LHYConnect.PostMessage("Unable to loot. Get closer to corps and try again.")
-        --    return false
-        --end
-
+        if(journal:find("far away", "seen") == 1) then
+            LHYConnect.PostMessage("Unable to loot. Get closer to the corpse and try again.")
+            return false
+        end
         return true
     end
 
@@ -114,24 +127,24 @@ Looter.Run = function(options)
                         end
                     end
                 else
-                    items = allItems
+                    for ak,av in pairs(allItems) do
+                        if(av ~= nil and av.Name ~= "" and av.Name ~= nil and av.ContID == corps.ID and av.Visible == true) then
+                            table.insert(items, av)
+                        end
+                    end
                 end
 
             	LHYConnect.PostMessage(("Found items to loot: " .. #items))
 
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
-    					if(item ~= nil and string.len(item.Active.Name()) > 0 and item.ContID == corps.ID) then
-    						LHYConnect.PostMessage(("Moving " .. item.Active.Name()))
-			            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
-
-                            if(reCheckAvailbility(journal) ~= true) then
-                                return
-                            end
-                            wait(600)
-    					else
-    						LHYConnect.PostMessage("Skipping item with no name.")
-			            end
+						LHYConnect.PostMessage(("Moving " .. item.Name))
+		            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
+		
+                        if(reCheckAvailbility(journal) ~= true) then
+                            return
+                        end
+                        wait(600)
 			        end
 			        LHYConnect.PostMessage("Done looting.")
         		end
@@ -151,8 +164,10 @@ Looter.Run = function(options)
 
         		Looter.History:push(corps.ID)
             else
-                LHYConnect.PostMessage("No unlooted corps found.")
+                LHYConnect.PostMessage("No unlooted corpses found.")
             end
         end
+    else
+        LHYConnect.PostMessage("No dead bodies around you!")
     end
 end
