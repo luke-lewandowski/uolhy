@@ -161,11 +161,20 @@ PetsClass.Run = function(options)
                 local time = actionTimeOut
                 UOExt.Managers.ItemManager.UseItemOnItem(bandages, pet)
 				repeat
-                    time = time - 50
-					wait(50)
-                    -- TODO fix issue here with getting stuck when pet is dead.
+                    time = time - 100
+
+                    -- TODO: Find out here if target is poisoned if so then cure it before bandages tick in.
+
+					wait(100)
                 until journal:find("finish", "too far away", "close") ~= nil or time < 0
-				--until (sLine == "You finish applying the bandages.")  or (sLine == "That is too far away.") or (sLine == "You did not stay close enough to heal your patient!") or (sLine == "That being is not damaged!")or (sLine == "You have cured the target of all poisons!")
+				
+                -- Possible messages
+                -- "You finish applying the bandages"
+                -- "That is too far away."
+                -- "You did not stay close enough to heal your patient!"
+                -- "That being is not damaged!"
+                -- "You have cured the target of all poisons!"
+                
             elseif(options[PetsClass.ConfKeys.UseMagery] and pet.health > 0 and UO.Mana > 10) then
                 -- Use GH here
 				-- Make sure that you have over 10 mana otherwise it will keep trying to cast with not enough mana.
