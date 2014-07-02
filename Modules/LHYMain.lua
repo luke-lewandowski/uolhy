@@ -68,6 +68,15 @@ function LHYMain:Create()
 		end
 	end
 
+	--- Find all atoms and wipe them (in case LHY was restarted)
+	local _curAtoms = listatoms("")
+	if(_curAtoms ~= nil and #_curAtoms > 0) then
+		for k,v in pairs(_curAtoms) do
+			setatom(v, nil)
+		end
+	end
+	
+
 	-- ############################# --
 	-- PUBLIC METHODS
 	-- ############################# --
