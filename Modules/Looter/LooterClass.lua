@@ -57,7 +57,13 @@ Looter.Run = function(options)
 		    ["looter_useSkinning"] = true,
 
 		    -- Loot only specific types
-		    ["looter_ignoreTypes"] = false
+		    ["looter_ignoreTypes"] = false,
+			
+			-- Broadcast what you've looted in party chat
+			["looter_broadcastParty"] = false,
+			 
+			-- Broadcast what you've looted in guild chat
+			["looter_broadcastGuild"] = false
 		}
 	end
 
@@ -140,6 +146,12 @@ Looter.Run = function(options)
         		if(#items > 0)then
     				for kitem,item in pairs(items) do
 						LHYConnect.PostMessage(("Moving " .. item.Name))
+						if(options.looter_broadcastParty) then
+							UO.Msg('/ Looted: '..item.Name..string.char(13))
+						end
+						if(options.looter_broadcastGuild) then
+							UO.Msg('\ Looted: '..item.Name..string.char(13))	
+						end
 		            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
 		
                         if(reCheckAvailbility(journal) ~= true) then

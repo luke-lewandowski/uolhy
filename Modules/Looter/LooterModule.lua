@@ -124,7 +124,7 @@ local looterDefinition =
 		-- TODO Crim looting needs to be implemented
 		controls.TLootAllowCrimLooting.Enabled = false
 
-		controls.TLootAllowSkinning = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight, controls.TLootSettingsPanel)
+		controls.TLootAllowSkinning = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + (rowHeight), controls.TLootSettingsPanel)
 		controls.TLootAllowSkinning.Caption = "Skin corpses"
 		controls.TLootAllowSkinning.Width = 150
 		controls.TLootAllowSkinning.Checked = Form.Config["looter_useSkinning"]
@@ -132,25 +132,23 @@ local looterDefinition =
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
 		
-		controls.TBroadcastParty = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight * 2, controls.TLootSettingsPanel)
+		controls.TBroadcastParty = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + (rowHeight * 2), controls.TLootSettingsPanel)
 		controls.TBroadcastParty.Caption = "Broadcast to Party"
 		controls.TBroadcastParty.Width = 150
 		controls.TBroadcastParty.Checked = Form.Config["looter_broadcastParty"]
 		controls.TBroadcastParty.OnClick = function(sender)
+			Form:ShowMessage("You will now broadcast what you've looted to party chat.")
 			Form.Config["looter_broadcastParty"] = sender.Checked
 		end
-		-- TODO broadcast to party needs to be implemented
-		controls.TBroadcastParty.Enabled = false
 		
-		controls.TBroadcastGuild = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight * 3, controls.TLootSettingsPanel)
+		controls.TBroadcastGuild = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + (rowHeight * 3), controls.TLootSettingsPanel)
 		controls.TBroadcastGuild.Caption = "Broadcast to Guild"
 		controls.TBroadcastGuild.Width = 150
 		controls.TBroadcastGuild.Checked = Form.Config["looter_broadcastGuild"]
 		controls.TBroadcastGuild.OnClick = function(sender)
+			Form:ShowMessage("You will now broadcast what you've looted to guild chat.")
 			Form.Config["looter_broadcastGuild"] = sender.Checked
 		end
-		-- TODO broadcast to guild needs to be implemented
-		controls.TBroadcastGuild.Enabled = false
 		
 		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 135, margin, controls.TLootSettingsPanel)
 		controls.THotKeyEdit.Width = 70
@@ -300,7 +298,8 @@ local looterDefinition =
 				["3856"] = "Emerald", -- Emerald
 				["3878"] = "Diamond", -- Diamond
 				["3865"] = "Sapphire", -- Sapphire
-				["3861"] = "Citrine" -- Citrine
+				["3861"] = "Citrine", -- Citrine
+				["3885"] = "Tourmaline" -- Tourmaline
 			}
 		)
 		Form:CreateConfigVar("looter_containerID", UO.BackpackID)
