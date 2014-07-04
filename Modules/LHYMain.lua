@@ -144,7 +144,7 @@ function LHYMain:Create()
 			Obj.Exit()
 		end
 		ems.Main.Width = 500
-		ems.Main.Height = 150
+		ems.Main.Height = 300
 
 		if(f.Config[LHYVars.Shared.StayOnTop] ~= nil and f.Config[LHYVars.Shared.StayOnTop] == true) then
 			ems.Main.FormStyle = 3 --3 -- Always on top

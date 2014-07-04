@@ -38,7 +38,7 @@ local overviewDefinition =
 			Form:UpdateTimerStatus()
 		end
 
-		controls.TStayOnTop = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - margin, (rowHeight * 2), panel)
+		controls.TStayOnTop = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - margin, (rowHeight * 2) + 5, panel)
 		controls.TStayOnTop.Caption = "Stay on top"
 		controls.TStayOnTop.Width = buttonSize
 		controls.TStayOnTop.Checked = Form.Config[LHYVars.Shared.StayOnTop]

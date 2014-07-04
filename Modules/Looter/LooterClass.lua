@@ -43,7 +43,8 @@ Looter.Run = function(options)
 				["3856"] = "Emerald", -- Emerald
 				["3878"] = "Diamond", -- Diamond
 				["3865"] = "Sapphire", -- Sapphire
-				["3861"] = "Citrine" -- Citrine
+				["3861"] = "Citrine", -- Citrine
+				["3885"] = "Tourmaline" -- Tourmaline
 			},
 
 			-- Container of where to place all the loot

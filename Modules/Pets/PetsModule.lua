@@ -66,14 +66,14 @@ local looterDefinition =
 		local rowHeight = 30
 		local margin = 5
 
-		controls.TPetsEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, panel)
+		controls.TPetsEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + 2, panel)
 		controls.TPetsEnabled.Caption = "Enable Pets"
 		controls.TPetsEnabled.OnClick = function(sender)
 			Form.Config["pets_IsEnabled"] = sender.Checked
 		end
 		controls.TPetsEnabled.Checked = Form.Config["pets_IsEnabled"]
 
-		controls.TPetsSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, 25, panel)
+		controls.TPetsSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, margin + 25, panel)
 		controls.TPetsSettingsPanel.Width = panel.Width - buttonSize - (margin) - 30
 		controls.TPetsSettingsPanel.Height = panel.Height - 30
 
@@ -166,12 +166,12 @@ local looterDefinition =
 			end
 		end
 
-		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, margin, controls.TPetsSettingsPanel)
+		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 135, margin, controls.TPetsSettingsPanel)
 		controls.THotKeyEdit.Width = 70
 		controls.THotKeyEdit.Height = 20
 		controls.THotKeyEdit.Text = Form.Config[PetsClass.Shared.HotKey]
 
-		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 7) + (2 * buttonSize), margin, controls.TPetsSettingsPanel)
+		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 5) + (2 * buttonSize), margin, controls.TPetsSettingsPanel)
 		controls.THotkeySet.Width = buttonSize
 		controls.THotkeySet.Height = 20
 		controls.THotkeySet.Caption = "Set Hotkey"

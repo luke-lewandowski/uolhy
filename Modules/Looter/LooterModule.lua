@@ -70,7 +70,7 @@ local looterDefinition =
 		-- UPPER MAIN MENU
 		-- #########################################
 
-		controls.TLootEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin, panel)
+		controls.TLootEnabled = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + 2, panel)
 		controls.TLootEnabled.Caption = "Enable Looter"
 		controls.TLootEnabled.Width = buttonSize
 		controls.TLootEnabled.OnClick = function(sender)
@@ -78,7 +78,7 @@ local looterDefinition =
 		end
 		controls.TLootEnabled.Checked = Form.Config["looter_IsEnabled"]
 
-		controls.TAutoLoot = Form:AddControl(Obj.Create("TCheckBox"), buttonSize + (margin * 2), margin, panel)
+		controls.TAutoLoot = Form:AddControl(Obj.Create("TCheckBox"), buttonSize + (margin * 2), margin + 2, panel)
 		controls.TAutoLoot.Caption = "Enable Autoloot*"
 		controls.TAutoLoot.OnClick = function(sender)
 			Form.Config["looter_autoloot"] = sender.Checked
@@ -107,7 +107,7 @@ local looterDefinition =
 			updateLootBagButton()
 		end
 
-		controls.TLootSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, 25, panel)
+		controls.TLootSettingsPanel = Form:AddControl(Obj.Create("TPanel"), margin, margin + 25, panel)
 		controls.TLootSettingsPanel.Width = panel.Width - buttonSize - (margin) - 30
 		controls.TLootSettingsPanel.Height = panel.Height - 30
 
@@ -132,12 +132,12 @@ local looterDefinition =
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
 		
-		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 150, margin, controls.TLootSettingsPanel)
+		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 135, margin, controls.TLootSettingsPanel)
 		controls.THotKeyEdit.Width = 70
 		controls.THotKeyEdit.Height = 20
 		controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
 
-		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 7) + (2 * buttonSize), margin, controls.TLootSettingsPanel)
+		controls.THotkeySet = Form:AddControl(Obj.Create("TButton"), (margin * 5) + (2 * buttonSize), margin, controls.TLootSettingsPanel)
 		controls.THotkeySet.Width = buttonSize
 		controls.THotkeySet.Height = 20
 		controls.THotkeySet.Caption = "Set Hotkey"
@@ -171,7 +171,7 @@ local looterDefinition =
 			controls.TLooterRemoveType.Enabled = i
 		end
 
-		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - (margin) - 18 , margin + 40, panel)
+		controls.TLootIgnoreTypes = Form:AddControl(Obj.Create("TCheckBox"), panel.Width - buttonSize - (margin) - 16, margin + 40, panel)
 		controls.TLootIgnoreTypes.Checked = Form.Config["looter_ignoreTypes"]
 		controls.TLootIgnoreTypes.Width = 20
 		controls.TLootIgnoreTypes.OnClick = function(sender)
@@ -235,7 +235,7 @@ local looterDefinition =
 		end
 
 		-- Remove Type from list
-		controls.TLooterRemoveType = Form:AddControl(Obj.Create("TButton"), panel.Width - buttonSize - (margin) - 20 , margin + 20, panel)
+		controls.TLooterRemoveType = Form:AddControl(Obj.Create("TButton"), panel.Width - buttonSize - (margin) - 20, margin + 20, panel)
 		controls.TLooterRemoveType.Caption = "-"
 		controls.TLooterRemoveType.Width = 20
 		controls.TLooterRemoveType.Height = 20
