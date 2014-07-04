@@ -132,6 +132,26 @@ local looterDefinition =
 			Form.Config["looter_useSkinning"] = sender.Checked
 		end
 		
+		controls.TBroadcastParty = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight * 2, controls.TLootSettingsPanel)
+		controls.TBroadcastParty.Caption = "Broadcast to Party"
+		controls.TBroadcastParty.Width = 150
+		controls.TBroadcastParty.Checked = Form.Config["looter_broadcastParty"]
+		controls.TBroadcastParty.OnClick = function(sender)
+			Form.Config["looter_broadcastParty"] = sender.Checked
+		end
+		-- TODO broadcast to party needs to be implemented
+		controls.TBroadcastParty.Enabled = false
+		
+		controls.TBroadcastGuild = Form:AddControl(Obj.Create("TCheckBox"), margin, rowHeight * 3, controls.TLootSettingsPanel)
+		controls.TBroadcastGuild.Caption = "Broadcast to Guild"
+		controls.TBroadcastGuild.Width = 150
+		controls.TBroadcastGuild.Checked = Form.Config["looter_broadcastGuild"]
+		controls.TBroadcastGuild.OnClick = function(sender)
+			Form.Config["looter_broadcastGuild"] = sender.Checked
+		end
+		-- TODO broadcast to guild needs to be implemented
+		controls.TBroadcastGuild.Enabled = false
+		
 		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 135, margin, controls.TLootSettingsPanel)
 		controls.THotKeyEdit.Width = 70
 		controls.THotKeyEdit.Height = 20
@@ -292,6 +312,10 @@ local looterDefinition =
 
 		--- Default hotkey for looting
 		Form:CreateConfigVar("looter_manualHotkey", "CTRL+B")
+		
+		--- Broadcast features
+		Form:CreateConfigVar("looter_broadcastParty", false)
+		Form:CreateConfigVar("looter_broadcastGuild", false)
 	end,
 	["Run"] = function(config)
 		-- Check here if status of looter is running
