@@ -150,6 +150,15 @@ local looterDefinition =
 			Form.Config["looter_broadcastGuild"] = sender.Checked
 		end
 		
+		controls.TBroadcastUOAM = Form:AddControl(Obj.Create("TCheckBox"), margin, margin + (rowHeight * 4), controls.TLootSettingsPanel)
+		controls.TBroadcastUOAM.Caption = "Broadcast to UO AM"
+		controls.TBroadcastUOAM.Width = 150
+		controls.TBroadcastUOAM.Checked = Form.Config["looter_broadcastUOAM"]
+		controls.TBroadcastUOAM.OnClick = function(sender)
+			Form:ShowMessage("You will now broadcast what you've looted to UO AM chat.")
+			Form.Config["looter_broadcastUOAM"] = sender.Checked
+		end
+		
 		controls.THotKeyEdit = Form:AddControl(Obj.Create("TEdit"), (margin * 2) + 135, margin, controls.TLootSettingsPanel)
 		controls.THotKeyEdit.Width = 70
 		controls.THotKeyEdit.Height = 20
@@ -315,6 +324,7 @@ local looterDefinition =
 		--- Broadcast features
 		Form:CreateConfigVar("looter_broadcastParty", false)
 		Form:CreateConfigVar("looter_broadcastGuild", false)
+		Form:CreateConfigVar("looter_broadcastUOAM", false)
 	end,
 	["Run"] = function(config)
 		-- Check here if status of looter is running

@@ -1,5 +1,4 @@
-dofile("..\\LHYVars.lua")
-dofile("..\\LHYConnect.lua")
+dofile("..\\LHYCommon.lua")
 
 Looter = Looter or {}
 
@@ -63,7 +62,10 @@ Looter.Run = function(options)
 			["looter_broadcastParty"] = false,
 			 
 			-- Broadcast what you've looted in guild chat
-			["looter_broadcastGuild"] = false
+			["looter_broadcastGuild"] = false,
+			
+			-- Broadcast what you've looted in UOAM chat
+			["looter_broadcastUOAM"] = false
 		}
 	end
 
@@ -109,7 +111,7 @@ Looter.Run = function(options)
                         UOExt.Managers.SkinningManager.CutCorps(corps.ID, knife)
 
                         -- Add something here for checking this actually happened.
-                        wait(600)
+                        wait(gpad(600))
                     else
                         LHYConnect.PostMessage("Unable to find dagger in your backpack.")
                     end
@@ -152,12 +154,17 @@ Looter.Run = function(options)
 						if(options.looter_broadcastGuild) then
 							UO.Msg('\ Looted: '..item.Name..string.char(13))	
 						end
+						if(options.looter_broadcastUOAM) then
+							lootMsg = ('--Looted: '..item.Name)
+							UO.Msg(string.sub(lootMsg, 1, 27)..string.char(13))	
+						end
 		            	UOExt.Managers.ItemManager.MoveItemToContainer(item, options.looter_containerID)
 		
                         if(reCheckAvailbility(journal) ~= true) then
                             return
                         end
-                        wait(600)
+
+                        wait(gpad(600))
 			        end
 			        LHYConnect.PostMessage("Done looting.")
         		end
