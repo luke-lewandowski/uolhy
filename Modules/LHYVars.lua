@@ -16,6 +16,7 @@ LHYVars =
 		["Message"] = "lhy_message",
 		["IsRunning"] = "lhy_isrunning",
 		["Config"] = "lhy_config",
-		["StayOnTop"] = "lhy_stayontop"
+		["StayOnTop"] = "lhy_stayontop",
+		["ServerPing"] = "lhy_serverping"
 	}
 }

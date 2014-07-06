@@ -4,8 +4,7 @@ BaseDir = getbasedir ()
 -- Libraries & runtime
 dofile(".\\Lib\\uoext\\uoext.lua")
 
-dofile(".\\Modules\\LHYVars.lua")
-dofile(".\\Modules\\LHYConnect.lua")
+dofile(".\\Modules\\LHYCommon.lua")
 
 dofile(".\\Modules\\Looter\\LooterClass.lua")
 

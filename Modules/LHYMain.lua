@@ -19,6 +19,8 @@ LHYMain.Settings = {
 	-- Each character will create its own config
 	["configFile"] = BaseDir .. "\\Configs\\config_" .. string.gsub(UO.CharName, " ", "_") .. "-" .. string.gsub(UO.Shard, " ", "_") .. ".json",
 	["timeInterval"] = 2000,
+	["pingInterval"] = 300000,
+	["ServerPing"] = 600,
 	-- Make sure that each time module is called that config is propagated across.
 	-- If set to false, modules will be using "Saved" version of the config.
 	["propagateConfigEachRun"] = true,
@@ -151,9 +153,14 @@ function LHYMain:Create()
 		else
 			f.Config[LHYVars.Shared.StayOnTop] = false
 		end
-
+		
+		local updatePing = function()
+			setatom(LHYVars.Shared.ServerPing, UOExt.Math.Round(UOExt.Server.GetPing(),0))
+		end
+		
 		ems.Main.BorderStyle = 3 --3 -- Do not allow resize
-
+		-- Initial ping
+		updatePing()
 		-- Application is driven by a timer
 		ems.Timer = Obj.Create("TTimer")
 		ems.Timer.Enabled = f.IsRunning
@@ -171,6 +178,14 @@ function LHYMain:Create()
 			end
 		end
 
+		-- Ping Timer
+		ems.PingTimer = Obj.Create("TTimer")
+		ems.PingTimer.Enabled = true
+		ems.PingTimer.Interval = LHYMain.Settings.pingInterval
+		ems.PingTimer.OnTimer = function(sender)
+			updatePing()
+		end
+		
 		ems.TTab = f:AddControl(Obj.Create("TTabControl"), 5, 5)
 		ems.TTab.Width = ems.Main.Width - 20
 		ems.TTab.Height = ems.Main.Height - 40
