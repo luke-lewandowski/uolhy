@@ -183,6 +183,22 @@ local looterDefinition =
 			Form.Config["looter_manualHotkey"] = string.upper(controls.THotKeyEdit.Text)
 			controls.THotKeyEdit.Text = Form.Config["looter_manualHotkey"]
 		end
+		
+		controls.TLootAll = Form:AddControl(Obj.Create("TButton"), (margin * 5) + (buttonSize), margin + (rowHeight), controls.TLootSettingsPanel)
+		controls.TLootAll.Width = buttonSize * 2
+		controls.TLootAll.Height = 20
+		controls.TLootAll.Caption = "Loot All"
+		controls.TLootAll.OnClick = function(sender)
+			Form:ShowMessage("Select the container you want to loot from.")
+			local newItem = UOExt.Managers.ItemManager.GetTargetID()
+			if(newItem > 0) then
+				local item = World().WithID(newItem).Items[1]
+				if(item ~= nil and item.Type ~= nil) then
+					--Container exists, loot it all.
+					Looter.LootAll(item)
+				end
+			end
+		end
 
 		
 

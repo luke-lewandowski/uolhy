@@ -73,12 +73,12 @@ Looter.Run = function(options)
 	if(UO.Hits <= 0) then
 		return
 	end
-
+	
 	local corpses = UOExt.Managers.ItemManager.GetCorpsesWithinRange(options.looter_distance)
 
     --- Check if journal states something being too far or out of sight
     local reCheckAvailbility = function(journalObject)
-        if(journal:find("far away", "seen") == 1) then
+        if(journal:find("far away", "seen", "sight") == 1) then
             LHYConnect.PostMessage("Unable to loot. Get closer to the corpse and try again.")
             return false
         end
@@ -190,4 +190,41 @@ Looter.Run = function(options)
     else
         LHYConnect.PostMessage("No dead bodies around you!")
     end
+end
+
+Looter.LootAll = function(container)
+	if(container == nil) then
+		LHYConnect.PostMessage("Container could not be passed.")
+		
+	end
+	
+	-- Make sure container is open.
+	while(UO.ContID ~= container.ID) do
+		container.Use()
+		wait(300)
+	end
+						
+	-- Get all the items.
+	local allItems = World().InContainer(container.ID).Items
+	
+	local items = {}
+
+	for ak,av in pairs(allItems) do
+		if(av ~= nil and av.Name ~= "" and av.Name ~= nil and av.ContID == container.ID and av.Visible == true) then
+			table.insert(items, av)
+		end
+	end
+	
+	-- Loot
+	LHYConnect.PostMessage(("Found items to loot: " .. #items))
+
+	if(#items > 0)then
+		for kitem,item in pairs(items) do
+			LHYConnect.PostMessage(("Moving " .. item.Name))
+			UOExt.Managers.ItemManager.MoveItemToContainer(item, UO.BackpackID)
+			wait(gpad(600))
+		end
+		LHYConnect.PostMessage("Done looting.")
+		return
+	end
 end
